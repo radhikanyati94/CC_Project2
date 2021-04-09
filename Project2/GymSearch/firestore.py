@@ -85,7 +85,6 @@ def add_review(rev, gymName):
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
-    return gymName
 
 
 def delete(id):

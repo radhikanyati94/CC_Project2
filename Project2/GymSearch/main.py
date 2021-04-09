@@ -88,7 +88,7 @@ def add(gym_id):
         #print(request.form)
         data = request.form.to_dict(flat=True)
         data["date"] = datetime.datetime.now()
-        g = firestore.add_review(data, gym_id)
+        firestore.add_review(data, gym_id)
         #print("done for ", g)
 
     return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
