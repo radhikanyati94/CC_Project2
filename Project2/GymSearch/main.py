@@ -85,13 +85,13 @@ def viewGym(gym_id):
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
 def add(gym_id):
     if request.method == 'POST':
-        print(request.form)
+        #print(request.form)
         data = request.form.to_dict(flat=True)
         data["date"] = datetime.datetime.now()
         g = firestore.add_review(data, gym_id)
-        print("done for ", g)
+        #print("done for ", g)
 
-    return render_template('form_gyms.html', action='Add', gyms={})
+    return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
 
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])

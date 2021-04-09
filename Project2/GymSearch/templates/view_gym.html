@@ -63,6 +63,9 @@
         <b>Date :</b> {{review.date}} </br>
         <b>Rating :</b> {{review.rating}} </br>
         <b>Review :</b> {{review.review}} </br>
+        {% if review.type %}
+            <b>Type :</b> {{review.type}} </br>
+        {% endif %}
     </div>
     {% else %}
     <p>No Reviews found</p>

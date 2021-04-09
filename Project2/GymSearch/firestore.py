@@ -51,7 +51,7 @@ def list_details():
 
     for doc in query:
         docs.append(doc.id)
-    print(docs)
+    #print(docs)
     return docs, last_title
 
 def read(book_id):
@@ -66,6 +66,7 @@ def readGym(gym_id):
     # [START bookshelf_firestore_client]
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gym_id)
+    #gym_ref = db.collection(u'Gyms').document(gym_id).orderBy('date')
     snapshot = gym_ref.get()
     # [END bookshelf_firestore_client]
     return document_to_dict(snapshot)
@@ -80,22 +81,10 @@ def update(data, book_id=None):
 create = update
 
 def add_review(rev, gymName):
-    print("the review is :", rev)
+    #print("the review is :", rev)
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
-    # city_ref.update({u'regions': firestore.ArrayUnion([u'greater_virginia'])})
-
-
-
-    # data = gym_ref.get()
-    # details = document_to_dict(data)
-    # # print(details["Reviews"])
-    # # print(len(reviews))
-    
-    # details["Reviews"].append(rev)
-    # gym_ref.update(details["Reviews"])
-    print("updated")
     return gymName
 
 
