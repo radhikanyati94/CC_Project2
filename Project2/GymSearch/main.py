@@ -91,6 +91,8 @@ def add(gym_id):
         firestore.add_review(data, gym_id)
         #print("done for ", g)
 
+        return redirect(url_for('.viewGym', gym_id=gym_id))
+
     return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
 
 
