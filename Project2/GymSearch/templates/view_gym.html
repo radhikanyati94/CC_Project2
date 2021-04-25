@@ -15,7 +15,6 @@
 #}
 
 {% extends "base.html" %}
-
 {% block content %}
 <div class="media">
   {# [START gym_image] #}
@@ -56,6 +55,16 @@
         </ul>
     </div>
     <h4> <b>Reviews :</b> </h4> 
+    <p>Filter By:
+    <select id="reviewDropdown" name="reviewDropdown">
+        <option value="All">All</option>
+        <option value="General">General</option>
+        <option value="Covid19">Covid19</option>
+        <option value="Equipments">Equipments</option>
+        <option value="Management">Management</option>
+    </select>
+    </p>
+
     {% for review in gym.Reviews %}
     <div class="gym-reviews">
         </br>
@@ -72,5 +81,7 @@
     {% endfor %}
   </div>
 </div>
+
+
 
 {% endblock %}

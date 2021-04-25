@@ -79,7 +79,13 @@ def view(book_id):
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/<review_type>')
+def filterGym(gym_id, review_type):
+    gym = firestore.readGym(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])

@@ -20,7 +20,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-  </head>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script>
+        $(document).ready( function() {
+            $("#reviewDropdown").val('{{reviewType}}');
+            $("#reviewDropdown").change(function () {
+                var val = $("#reviewDropdown").val();
+                if(val === 'All'){
+                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}';
+                } else {
+                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}' + "/" +val;
+                } 
+            });
+        });
+    </script>
+</head>
   <body>
     <div class="navbar navbar-default">
       <div class="container">
