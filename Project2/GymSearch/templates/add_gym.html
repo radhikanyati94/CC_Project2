@@ -1,0 +1,65 @@
+{#
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+
+{# [START form] #}
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Gym Registration </h3>
+
+<form method="POST" enctype='application/json'>
+
+  <div class="form-group">
+    <label for="name">Name</label>
+    <textarea name="name" id="name" class="form-control">{{name}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <textarea name="email" id="email" class="form-control">{{email}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <textarea name="password" id="password" class="form-control">{{password}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="occupancy">Occupancy</label>
+    <textarea name="occupancy" id="occupancy" class="form-control">{{occupancy}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="events">Events</label>
+
+    <input type="text" name="events[1][type]" id="events[1][type]" value="{{eventType}}" class="form-control"/>
+    <input type="text" name="events[2][name]" id="events[1][type]" value="{{eventName}}" class="form-control"/>
+
+    <!-- <input name="events[1][type]" class="form-control">{{eventType}}</textarea>
+    <input name="events[1][time]" class="form-control">{{eventTime}}</textarea>
+    <input name="events[1][days]" class="form-control">{{eventDays}}</textarea>
+
+    <textarea name="events[2][type]" class="form-control">{{eventType}}</textarea>
+    <textarea name="events[2][time]" class="form-control">{{eventTime}}</textarea>
+    <textarea name="events[2][days]" class="form-control">{{eventDays}}</textarea> -->
+  </div>
+
+
+  <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}
+{# [END form] #}

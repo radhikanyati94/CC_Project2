@@ -101,6 +101,20 @@ def add(gym_id):
 
     return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
 
+@app.route('/gyms/add', methods=['GET', 'POST'])
+def addGym():
+    if request.method == 'POST':
+        #print(request.form)
+        data = request.form.to_dict(flat=True)
+        print(data)
+        
+        firestore.add_gym(data, data["name"])
+        #print("done for ", g)
+
+        #return redirect(url_for('.viewGym', gym_id=gym_id))
+
+    return render_template('add_gym.html', action='Add', gym={})
+
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])
 def edit(book_id):
