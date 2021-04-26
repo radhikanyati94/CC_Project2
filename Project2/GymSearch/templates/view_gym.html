@@ -63,6 +63,30 @@
         <p> <b>Covid Guidelines :</b> {{gym.covidGuidelines}} </p>
     {% endif %}
 
+    <p><b> Weekly Workout Sessions: </b> </p>
+    {% if gym.events %}    
+    <table style="width:100%">
+        <tr>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Days</th>
+            <th>Occupancy</th>
+        </tr>    
+    {% for event in gym.events %}
+    <div class="gym-events">
+        <tr>
+            <td>{{event.type}}</td>
+            <td>{{event.time}}</td>
+            <td>{{event.days}}</td>
+            <td>{{event.occupancy}}</td>
+        </tr>
+    </div>
+    {% endfor %}
+    </table>
+    {% else %}
+    <p>No Sessions found</p>
+    {% endif %}
+
     {% if gym.Time %}
         <div class="openingHours">
             <p> <b>Opening Hours</b></p>
