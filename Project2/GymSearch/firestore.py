@@ -86,10 +86,11 @@ def add_review(rev, gymName):
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
 
-def add_gym(data, gymName):
+def add_gym(data):
     #print("the review is :", rev)
     db = firestore.Client()
-    gym_ref = db.collection(u'Gyms').document(gymName)
+    gym_ref = db.collection(u'Gyms').document(data["name"])
+    del data["name"]
     gym_ref.set(data)
     # print(data)
 

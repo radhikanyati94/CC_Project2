@@ -19,7 +19,9 @@
 
 {% block content %}
 <h3>Gym Registration </h3>
-
+{% if message %}
+    <span style="color:red">{{message}}</span>
+{% endif %}
 <form method="POST" enctype='application/json'>
 
   <div class="form-group">
@@ -43,22 +45,26 @@
   </div>
 
   <div class="form-group">
-    <label for="events">Events</label>
-
-    <input type="text" name="events[1][type]" id="events[1][type]" value="{{eventType}}" class="form-control"/>
-    <input type="text" name="events[2][name]" id="events[1][type]" value="{{eventName}}" class="form-control"/>
-
-    <!-- <input name="events[1][type]" class="form-control">{{eventType}}</textarea>
-    <input name="events[1][time]" class="form-control">{{eventTime}}</textarea>
-    <input name="events[1][days]" class="form-control">{{eventDays}}</textarea>
-
-    <textarea name="events[2][type]" class="form-control">{{eventType}}</textarea>
-    <textarea name="events[2][time]" class="form-control">{{eventTime}}</textarea>
-    <textarea name="events[2][days]" class="form-control">{{eventDays}}</textarea> -->
+    <label for="covidGuidelines">Covid Guidelines</label>
+    <textarea name="covidGuidelines" id="covidGuidelines" class="form-control">{{covidGuidelines}}</textarea>
   </div>
+
+  <label for="events">Fitness Sessions</label>
+  <div id="events">
+    <div class="form-group" id="event1">
+        Type: <input name="event1type"> &emsp;
+        Time: <input name="event1time"> &emsp;
+        Days: <input name="event1days"> &emsp;
+        Occupancy: <input name="event1occupancy"> &emsp;
+    </div> 
+  </div>
+  <a href="javascript:;" id="add-new-event">Add Session</a>
+</br>
 
 
   <button type="submit" class="btn btn-success">Save</button>
+  
+  
 </form>
 
 {% endblock %}

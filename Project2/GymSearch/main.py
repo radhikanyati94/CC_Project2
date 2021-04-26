@@ -103,17 +103,34 @@ def add(gym_id):
 
 @app.route('/gyms/add', methods=['GET', 'POST'])
 def addGym():
+    message = ""
     if request.method == 'POST':
-        #print(request.form)
-        data = request.form.to_dict(flat=True)
-        print(data)
-        
-        firestore.add_gym(data, data["name"])
-        #print("done for ", g)
+        data = request.form.to_dict()
+        gymName = data["name"]
+        gym = firestore.readGym(gymName)
+        if(gym == None):
+            i = 1
+            events = []
+            while(True):
+                key = "event" + str(i) + "type"
+                if key in data:
+                    dict = {}
+                    dict = {"type" : data[key], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                    events.append(dict)
+                    del data[key]
+                    del data["event" + str(i) + "time"]
+                    del data["event" + str(i) + "days"]
+                    del data["event" + str(i) + "occupancy"]
+                    i += 1
+                else:
+                    break 
+            data["events"] = events
+            firestore.add_gym(data)
+            return redirect(url_for('.viewGym', gym_id=gymName))
+        else:
+            message = "User Already Exists. Please Try to Login."
 
-        #return redirect(url_for('.viewGym', gym_id=gym_id))
-
-    return render_template('add_gym.html', action='Add', gym={})
+    return render_template('add_gym.html', action='Add', gym={}, message=message)
 
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])

@@ -34,6 +34,35 @@
                     window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}' + "/" +val;
                 } 
             });
+
+            let i = 2;
+            document.getElementById('add-new-event').onclick = function () {
+                let template = `
+                Type: <input name="event1type"> &emsp;
+                Time: <input name="event1time"> &emsp;
+                Days: <input name="event1days"> &emsp;
+                Occupancy: <input name="event1occupancy">
+                `;
+
+                let div = document.createElement('div');
+                div.innerHTML = template;
+                div.id = "event"+i;
+                $('#events').append(div);
+                $("#event"+i).addClass("form-group");
+                $("#event"+i).find('input').each(function() {
+                    if($(this).attr('name') ===  "event1type"){
+                        $(this).attr('name', "event"+i+"type");
+                    } else if($(this).attr('name') ===  "event1time"){
+                        $(this).attr('name', "event"+i+"time");
+                    } else if($(this).attr('name') ===  "event1days") {
+                        $(this).attr('name', "event"+i+"days");
+                    } else {
+                        $(this).attr('name', "event"+i+"occupancy");
+                    }                    
+                });
+                
+                i++;
+            }
         });
     </script>
 </head>
