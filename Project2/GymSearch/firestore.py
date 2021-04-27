@@ -14,6 +14,13 @@
 
 # [START bookshelf_firestore_client_import]
 from google.cloud import firestore
+import sentimentScore
+import AddReviewType
+import ExtractGymDetails
+import googlemaps
+from datetime import datetime
+import requests
+import json
 # [END bookshelf_firestore_client_import]
 
 
@@ -54,6 +61,76 @@ def list_details():
     #print(docs)
     return docs, last_title
 
+def sort_list_details():
+    db = firestore.Client()
+    query = db.collection(u'Gyms').stream()
+    gymsList = {}
+    last_title = None
+
+    for doc in query:
+        query = db.collection(u'Gyms').document(doc.id)
+        snapshot = query.get()
+        score = document_to_dict(snapshot)['Sentiment Score']
+        gymsList[doc.id] = score
+    
+    sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
+    return sortedList, last_title
+
+def get_open_hours(doc_id):
+    db = firestore.Client()
+    key = 'AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok'
+    # gmaps = googlemaps.Client(key='AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok')
+    query = db.collection(u'Gyms').document(doc_id)
+    snapshot = query.get()
+    placeId = document_to_dict(snapshot)['PlaceId']
+    fields = ['opening_hours']
+    endpoint_url = "https://maps.googleapis.com/maps/api/place/details/json"
+    params = {
+        'placeid': placeId,
+        'fields': ",".join(fields),
+        'key': key
+    }
+    res = requests.get(endpoint_url, params = params)
+    place_details =  json.loads(res.content)
+    if len(place_details['result']) == 0:
+        return "Open"
+    else:
+        op = place_details['result']['opening_hours']['open_now']
+        if op:
+            return "Open Now!"
+        else:
+            return "Closed"
+
+def list_on_pref(area):
+    db = firestore.Client()
+    query = db.collection(u'Gyms').stream()
+    gymsList = {}
+    last_title = None
+
+    for doc in query:
+        query = db.collection(u'Gyms').document(doc.id)
+        snapshot = query.get()
+        # print(document_to_dict(snapshot))
+        if document_to_dict(snapshot)['Area'] == area:            
+            score = document_to_dict(snapshot)['Sentiment Score']
+            gymsList[doc.id] = score
+    
+    sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
+    # print(gymsList)
+    dict_list = {}
+    for l in sortedList:
+        op = get_open_hours(l)
+        dict_list[l] = op
+    return dict_list, last_title
+
+# @app.route('/gyms/<gym_id>')
+def viewGym(gym_id):
+    gym = firestore.readGym(gym_id)
+    review_summary=reviewSummarize.get_vectorized_matrix(reviewSummarize.extract_reviews())
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id)
+    # , review_summary=review_summary)
+
+
 def read(book_id):
     # [START bookshelf_firestore_client]
     db = firestore.Client()
@@ -63,12 +140,15 @@ def read(book_id):
     return document_to_dict(snapshot)
     
 def readGym(gym_id):
-    # [START bookshelf_firestore_client]
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gym_id)
-    #gym_ref = db.collection(u'Gyms').document(gym_id).orderBy('date')
     snapshot = gym_ref.get()
-    # [END bookshelf_firestore_client]
+    return document_to_dict(snapshot)
+
+def readGymUser(email):
+    db = firestore.Client()
+    user_ref = db.collection(u'GymUsers').document(email)
+    snapshot = user_ref.get()
     return document_to_dict(snapshot)
 
 def update(data, book_id=None):
@@ -76,7 +156,6 @@ def update(data, book_id=None):
     book_ref = db.collection(u'Book').document(book_id)
     book_ref.set(data)
     return document_to_dict(book_ref.get())
-
 
 create = update
 
@@ -86,8 +165,56 @@ def add_review(rev, gymName):
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
 
+    #Add sentiment score
+    score = sentimentScore.sentiment_score(gymName)
+    print(score)
+    gym_ref.update({'SentimentScore': score})
+
+def add_gym(data):
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(data["name"])
+    del data["name"]
+    gym_ref.set(data)
+
+def add_gym_user(data):
+    db = firestore.Client()
+    user_ref = db.collection(u'GymUsers').document(data["email"])
+    del data["email"]
+    user_ref.set(data)
+
+def add_extracted_gym_details(doc_id):
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(doc_id)
+    snapshot = gym_ref.get()
+    area = document_to_dict(snapshot)['Area']
+    loc = doc_id + ' ' + area
+    details = ExtractGymDetails.extractDetails(loc)
+
+    gym_ref.set({details}, merge=True)
+
+    #Add type to reviews:
+    AddReviewType.addType(doc_id)
 
 def delete(id):
     db = firestore.Client()
     book_ref = db.collection(u'Book').document(id)
     book_ref.delete()
+
+def getSpecificReviews(gymName,reviewType):
+    db = firestore.Client()
+    result = []
+    docs = db.collection(u'Gyms').document(gymName).get().to_dict()
+    for doc in docs:
+        if doc == "Reviews":
+            reviewList = docs[doc]
+            for review in reviewList:
+                try:
+                    if review['type'].lower() == reviewType.lower():
+                        result.append(review)
+                except Exception as inst:
+                    print(inst)
+                    continue
+    return result
+
+        
+#getSpecificReviews("Equipments", "Lakeside Fitness")

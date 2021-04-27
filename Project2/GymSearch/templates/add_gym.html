@@ -1,0 +1,95 @@
+{#
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+
+{# [START form] #}
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Gym Registration </h3>
+{% if message %}
+    <span style="color:red">{{message}}</span>
+{% endif %}
+<form method="POST" enctype='application/json' id="myForm">
+
+  <div name="1" class="form-group">
+    <label for="name">Name<span class="required">*</span></label>
+    <textarea name="name" id="name" class="form-control" required>{{name}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email<span class="required">*</span></label>
+    <textarea name="email" id="email" class="form-control" required>{{email}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password<span class="required">*</span></label>
+    <textarea name="password" id="password" class="form-control" required>{{password}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="contact">Contact Number<span class="required">*</span></label>
+    <textarea name="contact" id="contact" class="form-control" required>{{contact}}</textarea>
+  </div>
+
+  <label for="address">Address<span class="required">*</span></label>
+  <div class="form-group" id="address">
+     Address Line 1: <input name="addressLine1" required> &emsp;
+     City: <input name="city" required> &emsp;
+     State: <input name="state" required> &emsp;
+     ZipCode: <input name="zipCode" required> &emsp;
+  </div> 
+
+  <div class="form-group">
+    <label for="occupancy">Gym Occupancy</label>
+    <textarea name="occupancy" id="occupancy" class="form-control">{{occupancy}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="covidGuidelines">Covid Guidelines</label>
+    <textarea name="covidGuidelines" id="covidGuidelines" class="form-control">{{covidGuidelines}}</textarea>
+  </div>
+
+  <label for="events">Fitness Sessions</label>
+  <div id="events">
+    <div class="form-group" id="event1">
+        Type: 
+        <select name="event1type" id="event1type">
+            <option value="Yoga">Yoga</option>
+            <option value="HIIT">HIIT</option>
+            <option value="Zumba">Zumba</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Kickboxing">Kickboxing</option>
+            <option value="Full Body Fusion">Full Body Fusion</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Other">Other</option>
+        </select> &emsp;
+        Name: <input name="event1name"> &emsp;
+        Time: <input name="event1time"> &emsp;
+        Days: <input name="event1days"> &emsp;
+        Occupancy: <input name="event1occupancy"> &emsp;
+    </div> 
+  </div>
+  <a href="javascript:;" id="add-new-event">Add Session</a>
+</br>
+
+
+  <button type="submit" class="btn btn-success">Save</button>
+  
+  
+</form>
+
+{% endblock %}
+{# [END form] #}

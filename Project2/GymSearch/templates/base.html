@@ -20,7 +20,136 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-  </head>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://rawgit.com/cezary/JSONForms/master/dist/json-forms.min.js"></script>
+
+    
+
+    <script>
+
+//     $("#forms").submit( function(eventObj) {
+//         console.log("here");
+//       $("<input />").attr("type", "hidden")
+//           .attr("name", loc)
+//           .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
+//           .appendTo("#forms");
+//       return true;
+//   });
+
+    
+
+        $(document).ready( function() {
+
+       
+ 
+        function showPosition(position) {
+        //   x.innerHTML = "Latitude: " + position.coords.latitude + 
+        //   "<br>Longitude: " + position.coords.longitude;
+        console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+        return [position.coords.latitude, position.coords.longitude];
+        }
+
+            $("#reviewDropdown").val('{{reviewType}}');
+            $("#reviewDropdown").change(function () {
+                var val = $("#reviewDropdown").val();
+                if(val === 'All'){
+                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}';
+                } else {
+                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}' + "/" +val;
+                } 
+            });
+
+            if(window.location.href.includes("home")){
+                console.log("home");
+                document.getElementById("gymDiv").style.display = "none";
+                document.getElementById("userDiv").style.display = "none";
+                $("#user").click(function(){
+                    document.getElementById("gymDiv").style.display = "none";
+                    document.getElementById("userDiv").style.display = "block";
+                });
+                $("#gym").click(function(){
+                    document.getElementById("userDiv").style.display = "none";
+                    document.getElementById("gymDiv").style.display = "block";
+                });
+            } else if(window.location.href.includes("add")){
+                let i = 2;
+                document.getElementById('add-new-event').onclick = function () {
+                    let template = `
+                    Type: 
+                    <select name="event1type" id="event1type">
+                        <option value="Yoga">Yoga</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="Zumba">Zumba</option>
+                        <option value="Pilates">Pilates</option>
+                        <option value="Kickboxing">Kickboxing</option>
+                        <option value="Full Body Fusion">Full Body Fusion</option>
+                        <option value="Cycling">Cycling</option>
+                        <option value="Other">Other</option>
+                    </select> &emsp;
+                    Name: <input name="event1name"> &emsp;
+                    Time: <input name="event1time"> &emsp;
+                    Days: <input name="event1days"> &emsp;
+                    Occupancy: <input name="event1occupancy">
+                    `;
+
+                    let div = document.createElement('div');
+                    div.innerHTML = template;
+                    div.id = "event"+i;
+                    $('#events').append(div);
+                    $("#event"+i).addClass("form-group");
+                    $("#event"+i).find('input').each(function() {
+                        if($(this).attr('name') ===  "event1name"){
+                            $(this).attr('name', "event"+i+"name");
+                        } else if($(this).attr('name') ===  "event1time"){
+                            $(this).attr('name', "event"+i+"time");
+                        } else if($(this).attr('name') ===  "event1days") {
+                            $(this).attr('name', "event"+i+"days");
+                        } else {
+                            $(this).attr('name', "event"+i+"occupancy");
+                        }                    
+                    });
+                    $("#event"+i).find('select').each(function() {
+                        if($(this).attr('name') ===  "event1type"){
+                            $(this).attr('name', "event"+i+"type");
+                        }
+                    });
+                    
+                    i++;
+                }
+            }
+
+            $("#forms").submit( function(eventObj) {
+                console.log("here");
+                $("<input />").attr("type", "hidden")
+                    .attr("name", loc)
+                    .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
+                    .appendTo("#forms");
+                return true;
+            });
+
+            function showPosition(position) {
+                //   x.innerHTML = "Latitude: " + position.coords.latitude + 
+                //   "<br>Longitude: " + position.coords.longitude;
+                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+                return [position.coords.latitude, position.coords.longitude];
+            } 
+            
+        });
+    </script>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align:center;
+        }
+
+        .required {
+            color: red;
+        }
+    </style>
+</head>
   <body>
     <div class="navbar navbar-default">
       <div class="container">

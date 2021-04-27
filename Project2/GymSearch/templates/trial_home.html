@@ -24,6 +24,16 @@
   {% endfor %}
 {% endwith %}
 
+<h3> Enter Area</h3>
+<form id = "forms" method="POST", enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="name">Area</label>
+        <input type="text" name="area" id="name" value="{{area}}" class="form-control"/>
+    </div>
+    <button type="submit" class="btn btn-success">Search</button>
+</form>
+
+
 <h3>Top Gyms near Tempe</h3>
 <!-- <a href="/books/add" class="btn btn-success btn-sm">
   <i class="glyphicon glyphicon-plus"></i>
@@ -34,7 +44,7 @@
 <div class="media">
   <a href="/gyms/{{gName}}">
     <div class="media-body">
-      <h4>{{gName}}</h4>
+      <h4>{{gName}} <span style="padding-left: 15px;"> {{gymNames[gName]}} </h4>
     </div>
   </a>
 </div>
@@ -50,11 +60,5 @@
 </nav>
 {% endif %}
 
-<div>
-    <a href="/gyms/add" class="btn btn-success btn-sm">
-        <i class="glyphicon glyphicon-plus"></i>
-        Register Gym
-    </a>
-</div>
 
 {% endblock %}

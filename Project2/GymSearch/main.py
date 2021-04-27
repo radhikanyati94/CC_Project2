@@ -62,13 +62,31 @@ if not app.testing:
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
 
+# @app.route('/')
+# def list():
+#     # start_after = request.args.get('start_after', None)
+#     books, last_title = firestore.list_details()
+#     # books, last_title = firestore.sort_list_details()
 
-@app.route('/')
-def list():
-    # start_after = request.args.get('start_after', None)
-    books, last_title = firestore.list_details()
+#     return render_template('list.html', gymNames=books, last_title=last_title)
 
-    return render_template('list.html', gymNames=books, last_title=last_title)
+@app.route('/', methods=['GET', 'POST'])
+def list_on_pref():
+   
+    # data = request.form.to_dict(flat=True)
+    # area = "Tempe"
+    # books, last_title = firestore.list_on_pref(area)
+    if request.method == 'POST':
+        details = request.form
+        print(details)
+        area = request.form['area']
+        books, last_title = firestore.list_on_pref(area)
+        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+    else:
+        books = []
+        last_title = None
+        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+    # return render_template('trial_home.html')
 
 
 @app.route('/books/<book_id>')
@@ -79,7 +97,13 @@ def view(book_id):
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/<review_type>')
+def filterGym(gym_id, review_type):
+    gym = firestore.readGym(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
@@ -94,6 +118,54 @@ def add(gym_id):
         return redirect(url_for('.viewGym', gym_id=gym_id))
 
     return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
+
+@app.route('/gyms/add', methods=['GET', 'POST'])
+def addGym():
+    message = ""
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        gymName = data["name"]
+        user = firestore.readGymUser(data["email"])
+        if(user == None):
+            i = 1
+            events = []
+            userDict = {}
+            while(True):
+                key = "event" + str(i) + "type"
+                if key in data:
+                    dict = {}
+                    dict = {"type" : data[key], "name" : data["event" + str(i) + "name"], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                    events.append(dict)
+                    del data[key]
+                    del data["event" + str(i) + "name"]
+                    del data["event" + str(i) + "time"]
+                    del data["event" + str(i) + "days"]
+                    del data["event" + str(i) + "occupancy"]
+                    i += 1
+                else:
+                    break 
+            data["events"] = events
+            data["location"] = data["addressLine1"]+ ", " + data["city"] + ", " + data["state"] + " " + data["zipCode"]
+            data["Area"] = "Tempe"
+            userDict["email"] = data["email"]
+            userDict["password"] = data["password"]
+            userDict["contact"] = data["contact"]
+
+            del data["addressLine1"]
+            del data["city"]
+            del data["state"]
+            del data["zipCode"]
+
+            del data["email"]
+            del data["password"]
+            
+            firestore.add_gym(data)
+            firestore.add_gym_user(userDict)
+            return redirect(url_for('.viewGym', gym_id=gymName))
+        else:
+            message = "User Already Exists. Please Try to Login."
+
+    return render_template('add_gym.html', action='Add', gym={}, message=message)
 
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])
