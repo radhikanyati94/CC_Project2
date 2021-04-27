@@ -66,10 +66,14 @@ if not app.testing:
 @app.route('/')
 def list():
     # start_after = request.args.get('start_after', None)
-    books, last_title = firestore.list_details()
+    gyms, last_title = firestore.list_details()
 
-    return render_template('list.html', gymNames=books, last_title=last_title)
+    return render_template('list.html', gymNames=gyms, last_title=last_title)
 
+@app.route('/home')
+def home():
+    # start_after = request.args.get('start_after', None)
+    return render_template('home.html')
 
 @app.route('/books/<book_id>')
 def view(book_id):
