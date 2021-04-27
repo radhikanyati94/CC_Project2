@@ -108,6 +108,13 @@ def add_review(rev, gymName):
     print(score)
     gym_ref.update({'SentimentScore': score})
 
+def add_gym(data):
+    #print("the review is :", rev)
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(data["name"])
+    del data["name"]
+    gym_ref.set(data)
+    # print(data)
 
 def delete(id):
     db = firestore.Client()
