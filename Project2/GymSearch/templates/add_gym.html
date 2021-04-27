@@ -22,25 +22,38 @@
 {% if message %}
     <span style="color:red">{{message}}</span>
 {% endif %}
-<form method="POST" enctype='application/json'>
+<form method="POST" enctype='application/json' id="myForm">
 
-  <div class="form-group">
-    <label for="name">Name</label>
-    <textarea name="name" id="name" class="form-control">{{name}}</textarea>
+  <div name="1" class="form-group">
+    <label for="name">Name<span class="required">*</span></label>
+    <textarea name="name" id="name" class="form-control" required>{{name}}</textarea>
   </div>
 
   <div class="form-group">
-    <label for="email">Email</label>
-    <textarea name="email" id="email" class="form-control">{{email}}</textarea>
+    <label for="email">Email<span class="required">*</span></label>
+    <textarea name="email" id="email" class="form-control" required>{{email}}</textarea>
   </div>
 
   <div class="form-group">
-    <label for="password">Password</label>
-    <textarea name="password" id="password" class="form-control">{{password}}</textarea>
+    <label for="password">Password<span class="required">*</span></label>
+    <textarea type="password" name="password" id="password" class="form-control" required>{{password}}</textarea>
   </div>
 
   <div class="form-group">
-    <label for="occupancy">Occupancy</label>
+    <label for="contact">Contact Number<span class="required">*</span></label>
+    <textarea name="contact" id="contact" class="form-control" required>{{contact}}</textarea>
+  </div>
+
+  <label for="address">Address<span class="required">*</span></label>
+  <div class="form-group" id="address">
+     Address Line 1: <input name="addressLine1" required> &emsp;
+     City: <input name="city" required> &emsp;
+     State: <input name="state" required> &emsp;
+     ZipCode: <input name="zipCode" required> &emsp;
+  </div> 
+
+  <div class="form-group">
+    <label for="occupancy">Gym Occupancy</label>
     <textarea name="occupancy" id="occupancy" class="form-control">{{occupancy}}</textarea>
   </div>
 
@@ -52,7 +65,19 @@
   <label for="events">Fitness Sessions</label>
   <div id="events">
     <div class="form-group" id="event1">
-        Type: <input name="event1type"> &emsp;
+        Type: 
+        <select name="event1type" id="event1type">
+            <option value="Yoga">Yoga</option>
+            <option value="HIIT">HIIT</option>
+            <option value="Zumba">Zumba</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Kickboxing">Kickboxing</option>
+            <option value="Full Body Fusion">Full Body Fusion</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Personal Training">Personal Training</option>
+            <option value="Other">Other</option>
+        </select> &emsp;
+        Name: <input name="event1name"> &emsp;
         Time: <input name="event1time"> &emsp;
         Days: <input name="event1days"> &emsp;
         Occupancy: <input name="event1occupancy"> &emsp;

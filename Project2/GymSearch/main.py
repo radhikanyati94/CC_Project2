@@ -62,13 +62,22 @@ if not app.testing:
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
 
-# @app.route('/')
-# def list():
-#     # start_after = request.args.get('start_after', None)
-#     books, last_title = firestore.list_details()
-#     # books, last_title = firestore.sort_list_details()
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    result = ""
+    if request.method == 'POST':
+        details = request.form
+        result, gymName = firestore.gymLogin(details["email"], details["password"])
+        if result == "Success":
+            #update it to edit gym page
+            return redirect(url_for('.viewGym', gym_id=gymName))
+    return render_template('home.html', message=result)
 
-#     return render_template('list.html', gymNames=books, last_title=last_title)
+@app.route('/list')
+def list():
+    gymNames, last_title = firestore.list_details()
+
+    return render_template('list.html', gymNames=gymNames, last_title=last_title)
 
 @app.route('/', methods=['GET', 'POST'])
 def list_on_pref():
@@ -126,17 +135,19 @@ def addGym():
     if request.method == 'POST':
         data = request.form.to_dict()
         gymName = data["name"]
-        gym = firestore.readGym(gymName)
-        if(gym == None):
+        user = firestore.readGymUser(data["email"])
+        if(user == None):
             i = 1
             events = []
+            userDict = {}
             while(True):
                 key = "event" + str(i) + "type"
                 if key in data:
                     dict = {}
-                    dict = {"type" : data[key], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                    dict = {"type" : data[key], "name" : data["event" + str(i) + "name"], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
                     events.append(dict)
                     del data[key]
+                    del data["event" + str(i) + "name"]
                     del data["event" + str(i) + "time"]
                     del data["event" + str(i) + "days"]
                     del data["event" + str(i) + "occupancy"]
@@ -144,7 +155,24 @@ def addGym():
                 else:
                     break 
             data["events"] = events
+            data["location"] = data["addressLine1"]+ ", " + data["city"] + ", " + data["state"] + " " + data["zipCode"]
+            data["Area"] = data["city"]
+            userDict["email"] = data["email"]
+            userDict["password"] = data["password"]
+            userDict["contact"] = data["contact"]
+            userDict["name"] = data["name"]
+
+            del data["addressLine1"]
+            del data["city"]
+            del data["state"]
+            del data["zipCode"]
+
+            del data["email"]
+            del data["password"]
+            
+            #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
+            firestore.add_gym_user(userDict)
             return redirect(url_for('.viewGym', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."
