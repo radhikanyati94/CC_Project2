@@ -93,7 +93,7 @@ def get_open_hours(doc_id):
     res = requests.get(endpoint_url, params = params)
     place_details =  json.loads(res.content)
     if len(place_details['result']) == 0:
-        return "Open"
+        return "Open Now!"
     else:
         op = place_details['result']['opening_hours']['open_now']
         if op:

@@ -80,6 +80,7 @@ def list_on_pref():
         details = request.form
         print(details)
         area = request.form['area']
+        
         books, last_title = firestore.list_on_pref(area)
         return render_template('trial_home.html', gymNames=books, last_title=last_title)
     else:

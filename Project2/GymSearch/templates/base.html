@@ -28,37 +28,7 @@
 
     <script>
 
-//     $("#forms").submit( function(eventObj) {
-//         console.log("here");
-//       $("<input />").attr("type", "hidden")
-//           .attr("name", loc)
-//           .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
-//           .appendTo("#forms");
-//       return true;
-//   });
-
-    
-
         $(document).ready( function() {
-
-       
- 
-        function showPosition(position) {
-        //   x.innerHTML = "Latitude: " + position.coords.latitude + 
-        //   "<br>Longitude: " + position.coords.longitude;
-        console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
-        return [position.coords.latitude, position.coords.longitude];
-        }
-
-            $("#reviewDropdown").val('{{reviewType}}');
-            $("#reviewDropdown").change(function () {
-                var val = $("#reviewDropdown").val();
-                if(val === 'All'){
-                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}';
-                } else {
-                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}' + "/" +val;
-                } 
-            });
 
             if(window.location.href.includes("home")){
                 console.log("home");
@@ -103,21 +73,7 @@
                 }
             }
 
-            $("#forms").submit( function(eventObj) {
-                console.log("here");
-                $("<input />").attr("type", "hidden")
-                    .attr("name", loc)
-                    .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
-                    .appendTo("#forms");
-                return true;
-            });
 
-            function showPosition(position) {
-                //   x.innerHTML = "Latitude: " + position.coords.latitude + 
-                //   "<br>Longitude: " + position.coords.longitude;
-                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
-                return [position.coords.latitude, position.coords.longitude];
-            }        
         });
     </script>
 
