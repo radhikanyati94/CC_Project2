@@ -111,17 +111,19 @@ def addGym():
     if request.method == 'POST':
         data = request.form.to_dict()
         gymName = data["name"]
-        gym = firestore.readGym(gymName)
-        if(gym == None):
+        user = firestore.readGymUser(data["email"])
+        if(user == None):
             i = 1
             events = []
+            userDict = {}
             while(True):
                 key = "event" + str(i) + "type"
                 if key in data:
                     dict = {}
-                    dict = {"type" : data[key], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                    dict = {"type" : data[key], "name" : data["event" + str(i) + "name"], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
                     events.append(dict)
                     del data[key]
+                    del data["event" + str(i) + "name"]
                     del data["event" + str(i) + "time"]
                     del data["event" + str(i) + "days"]
                     del data["event" + str(i) + "occupancy"]
@@ -129,7 +131,22 @@ def addGym():
                 else:
                     break 
             data["events"] = events
+            data["location"] = data["addressLine1"]+ ", " + data["city"] + ", " + data["state"] + " " + data["zipCode"]
+            data["Area"] = "Tempe"
+            userDict["email"] = data["email"]
+            userDict["password"] = data["password"]
+            userDict["contact"] = data["contact"]
+
+            del data["addressLine1"]
+            del data["city"]
+            del data["state"]
+            del data["zipCode"]
+
+            del data["email"]
+            del data["password"]
+            
             firestore.add_gym(data)
+            firestore.add_gym_user(userDict)
             return redirect(url_for('.viewGym', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."

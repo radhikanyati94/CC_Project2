@@ -51,7 +51,18 @@
                 let i = 2;
                 document.getElementById('add-new-event').onclick = function () {
                     let template = `
-                    Type: <input name="event1type"> &emsp;
+                    Type: 
+                    <select name="event1type" id="event1type">
+                        <option value="Yoga">Yoga</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="Zumba">Zumba</option>
+                        <option value="Pilates">Pilates</option>
+                        <option value="Kickboxing">Kickboxing</option>
+                        <option value="Full Body Fusion">Full Body Fusion</option>
+                        <option value="Cycling">Cycling</option>
+                        <option value="Other">Other</option>
+                    </select> &emsp;
+                    Name: <input name="event1name"> &emsp;
                     Time: <input name="event1time"> &emsp;
                     Days: <input name="event1days"> &emsp;
                     Occupancy: <input name="event1occupancy">
@@ -63,8 +74,8 @@
                     $('#events').append(div);
                     $("#event"+i).addClass("form-group");
                     $("#event"+i).find('input').each(function() {
-                        if($(this).attr('name') ===  "event1type"){
-                            $(this).attr('name', "event"+i+"type");
+                        if($(this).attr('name') ===  "event1name"){
+                            $(this).attr('name', "event"+i+"name");
                         } else if($(this).attr('name') ===  "event1time"){
                             $(this).attr('name', "event"+i+"time");
                         } else if($(this).attr('name') ===  "event1days") {
@@ -72,6 +83,11 @@
                         } else {
                             $(this).attr('name', "event"+i+"occupancy");
                         }                    
+                    });
+                    $("#event"+i).find('select').each(function() {
+                        if($(this).attr('name') ===  "event1type"){
+                            $(this).attr('name', "event"+i+"type");
+                        }
                     });
                     
                     i++;
@@ -92,7 +108,8 @@
                 //   "<br>Longitude: " + position.coords.longitude;
                 console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
                 return [position.coords.latitude, position.coords.longitude];
-            }        
+            } 
+            
         });
     </script>
 
@@ -102,7 +119,11 @@
             border-collapse: collapse;
             text-align:center;
         }
-    </style
+
+        .required {
+            color: red;
+        }
+    </style>
 </head>
   <body>
     <div class="navbar navbar-default">

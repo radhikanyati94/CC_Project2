@@ -80,12 +80,15 @@ def read(book_id):
     return document_to_dict(snapshot)
     
 def readGym(gym_id):
-    # [START bookshelf_firestore_client]
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gym_id)
-    #gym_ref = db.collection(u'Gyms').document(gym_id).orderBy('date')
     snapshot = gym_ref.get()
-    # [END bookshelf_firestore_client]
+    return document_to_dict(snapshot)
+
+def readGymUser(email):
+    db = firestore.Client()
+    user_ref = db.collection(u'GymUsers').document(email)
+    snapshot = user_ref.get()
     return document_to_dict(snapshot)
 
 def update(data, book_id=None):
@@ -109,12 +112,16 @@ def add_review(rev, gymName):
     gym_ref.update({'SentimentScore': score})
 
 def add_gym(data):
-    #print("the review is :", rev)
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(data["name"])
     del data["name"]
     gym_ref.set(data)
-    # print(data)
+
+def add_gym_user(data):
+    db = firestore.Client()
+    user_ref = db.collection(u'GymUsers').document(data["email"])
+    del data["email"]
+    user_ref.set(data)
 
 def delete(id):
     db = firestore.Client()
