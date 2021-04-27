@@ -79,7 +79,13 @@ def view(book_id):
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/<review_type>')
+def filterGym(gym_id, review_type):
+    gym = firestore.readGym(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
@@ -94,6 +100,37 @@ def add(gym_id):
         return redirect(url_for('.viewGym', gym_id=gym_id))
 
     return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
+
+@app.route('/gyms/add', methods=['GET', 'POST'])
+def addGym():
+    message = ""
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        gymName = data["name"]
+        gym = firestore.readGym(gymName)
+        if(gym == None):
+            i = 1
+            events = []
+            while(True):
+                key = "event" + str(i) + "type"
+                if key in data:
+                    dict = {}
+                    dict = {"type" : data[key], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                    events.append(dict)
+                    del data[key]
+                    del data["event" + str(i) + "time"]
+                    del data["event" + str(i) + "days"]
+                    del data["event" + str(i) + "occupancy"]
+                    i += 1
+                else:
+                    break 
+            data["events"] = events
+            firestore.add_gym(data)
+            return redirect(url_for('.viewGym', gym_id=gymName))
+        else:
+            message = "User Already Exists. Please Try to Login."
+
+    return render_template('add_gym.html', action='Add', gym={}, message=message)
 
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])

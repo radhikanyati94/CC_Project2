@@ -15,7 +15,6 @@
 #}
 
 {% extends "base.html" %}
-
 {% block content %}
 <div class="media">
   {# [START gym_image] #}
@@ -36,26 +35,84 @@
     <h2 class="gym-id">
       {{gym_id}}
     </h2>
-    <p> <b>Address : </b> {{gym.location}} </p>
-    <p> <b>Contact Number : </b> {{gym.contact}} </p>
-    <p> <b>Overall Rating : </b> {{gym.rating}} </p>
-    <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
-    <p> <b>Website : </b> {{gym.website}} </p>
-    <p> <b>Occupancy : </b> {{gym.occupancy}} </p>
-    <p> <b>Covid Guidelines :</b> "" </p>
-    <div class="openingHours">
-        <p> <b>Opening Hours</b></p>
-        <ul>
-            <li> Monday : {{gym.Time.Monday}} </li>
-            <li> Tuesday : {{gym.Time.Tuesday}} </li>
-            <li> Wednesday : {{gym.Time.Wednesday}} </li>
-            <li> Thursday : {{gym.Time.Thursday}} </li>
-            <li> Friday : {{gym.Time.Friday}} </li>
-            <li> Saturday : {{gym.Time.Saturday}} </li>
-            <li> Sunday : {{gym.Time.Sunday}} </li>
-        </ul>
+    {% if gym.location %}
+        <p> <b>Address : </b> {{gym.location}} </p>
+    {% endif %}
+
+    {% if gym.contact %}
+        <p> <b>Contact Number : </b> {{gym.contact}} </p>
+    {% endif %}
+
+    {% if gym.rating %}
+        <p> <b>Overall Rating : </b> {{gym.rating}} </p>
+    {% endif %}
+
+    {% if gym.reviews_count %}
+        <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
+    {% endif %}
+
+    {% if gym.website %}
+        <p> <b>Website : </b> {{gym.website}} </p>
+    {% endif %}
+
+    {% if gym.occupancy %}
+        <p> <b>Occupancy : </b> {{gym.occupancy}} </p>
+    {% endif %}
+
+    {% if gym.covidGuidelines %}
+        <p> <b>Covid Guidelines :</b> {{gym.covidGuidelines}} </p>
+    {% endif %}
+
+    <p><b> Weekly Workout Sessions: </b> </p>
+    {% if gym.events %}    
+    <table style="width:100%">
+        <tr>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Days</th>
+            <th>Occupancy</th>
+        </tr>    
+    {% for event in gym.events %}
+    <div class="gym-events">
+        <tr>
+            <td>{{event.type}}</td>
+            <td>{{event.time}}</td>
+            <td>{{event.days}}</td>
+            <td>{{event.occupancy}}</td>
+        </tr>
     </div>
+    {% endfor %}
+    </table>
+    {% else %}
+    <p>No Sessions found</p>
+    {% endif %}
+
+    {% if gym.Time %}
+        <div class="openingHours">
+            <p> <b>Opening Hours</b></p>
+            <ul>
+                <li> Monday : {{gym.Time.Monday}} </li>
+                <li> Tuesday : {{gym.Time.Tuesday}} </li>
+                <li> Wednesday : {{gym.Time.Wednesday}} </li>
+                <li> Thursday : {{gym.Time.Thursday}} </li>
+                <li> Friday : {{gym.Time.Friday}} </li>
+                <li> Saturday : {{gym.Time.Saturday}} </li>
+                <li> Sunday : {{gym.Time.Sunday}} </li>
+            </ul>
+        </div>
+    {% endif %}
+    
     <h4> <b>Reviews :</b> </h4> 
+    <p>Filter By:
+    <select id="reviewDropdown" name="reviewDropdown">
+        <option value="All">All</option>
+        <option value="General">General</option>
+        <option value="Covid19">Covid19</option>
+        <option value="Equipments">Equipments</option>
+        <option value="Management">Management</option>
+    </select>
+    </p>
+
     {% for review in gym.Reviews %}
     <div class="gym-reviews">
         </br>
@@ -72,5 +129,7 @@
     {% endfor %}
   </div>
 </div>
+
+
 
 {% endblock %}
