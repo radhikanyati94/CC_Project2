@@ -124,5 +124,5 @@ def main():
     
     print("done")
 
-read_the_gyms()
+# read_the_gyms()
 # main()

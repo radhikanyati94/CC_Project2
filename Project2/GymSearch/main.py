@@ -62,18 +62,32 @@ if not app.testing:
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
 
+# @app.route('/')
+# def list():
+#     # start_after = request.args.get('start_after', None)
+#     books, last_title = firestore.list_details()
+#     # books, last_title = firestore.sort_list_details()
 
-@app.route('/')
-def list():
-    # start_after = request.args.get('start_after', None)
-    gyms, last_title = firestore.list_details()
+#     return render_template('list.html', gymNames=books, last_title=last_title)
 
-    return render_template('list.html', gymNames=gyms, last_title=last_title)
+@app.route('/', methods=['GET', 'POST'])
+def list_on_pref():
+   
+    # data = request.form.to_dict(flat=True)
+    # area = "Tempe"
+    # books, last_title = firestore.list_on_pref(area)
+    if request.method == 'POST':
+        details = request.form
+        print(details)
+        area = request.form['area']
+        books, last_title = firestore.list_on_pref(area)
+        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+    else:
+        books = []
+        last_title = None
+        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+    # return render_template('trial_home.html')
 
-@app.route('/home')
-def home():
-    # start_after = request.args.get('start_after', None)
-    return render_template('home.html')
 
 @app.route('/books/<book_id>')
 def view(book_id):

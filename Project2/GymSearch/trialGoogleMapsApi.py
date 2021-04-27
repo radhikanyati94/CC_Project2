@@ -2,24 +2,12 @@ import googlemaps
 from datetime import datetime
 import requests
 import json
+from google.cloud import firestore
+
 
 key = 'AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok'
 
 gmaps = googlemaps.Client(key='AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok')
-
-loc = gmaps.geolocate()
-print(loc)
-
-
-URL = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok"
-# location = input("Enter the location here: ") #taking user input
-# api_key = 'YOUR_API_KEY' # Acquire from developer.here.com
-# PARAMS = {'apikey':key,'q':location} 
-
-# sending get request and saving the response as response object 
-
-# latitude = data['items'][0]['position']['lat']
-# longitude = data['items'][0]['position']['lng']
 
 # Geocoding an address
 # geocode_result = gmaps.find_place('Mountainside Fitness Tempe', 'textquery')
@@ -37,3 +25,37 @@ URL = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBOGAj_OnaB4
 # res = requests.get(endpoint_url, params = params)
 # place_details =  json.loads(res.content)
 # print(place_details['result'])
+
+def document_to_dict(doc):
+    if not doc.exists:
+        return None
+    doc_dict = doc.to_dict()
+    doc_dict['id'] = doc.id
+    return doc_dict
+
+db = firestore.Client()
+query = db.collection(u'Gyms').stream()
+for doc in query:
+    print(doc.id)
+    query = db.collection(u'Gyms').document(doc.id)
+    snapshot = query.get()
+    place_id = document_to_dict(snapshot)['PlaceId']
+    
+    fields = ['opening_hours']
+    endpoint_url = "https://maps.googleapis.com/maps/api/place/details/json"
+    params = {
+        'placeid': place_id,
+        'fields': ",".join(fields),
+        'key': key
+    }
+    res = requests.get(endpoint_url, params = params)
+    place_details =  json.loads(res.content)
+    print(len(place_details))
+    if len(place_details['result']) == 0:
+        print("Open")
+    else:
+        print(place_details['result']['opening_hours']['open_now'])
+
+
+
+
