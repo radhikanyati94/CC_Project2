@@ -62,13 +62,22 @@ if not app.testing:
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
 
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    result = ""
+    if request.method == 'POST':
+        details = request.form
+        result, gymName = firestore.gymLogin(details["email"], details["password"])
+        if result == "Success":
+            #update it to edit gym page
+            return redirect(url_for('.viewGym', gym_id=gymName))
+    return render_template('home.html', message=result)
+
 @app.route('/list')
 def list():
-    # start_after = request.args.get('start_after', None)
-    books, last_title = firestore.list_details()
-    # books, last_title = firestore.sort_list_details()
+    gymNames, last_title = firestore.list_details()
 
-    return render_template('list.html', gymNames=books, last_title=last_title)
+    return render_template('list.html', gymNames=gymNames, last_title=last_title)
 
 @app.route('/', methods=['GET', 'POST'])
 def list_on_pref():
@@ -150,6 +159,7 @@ def addGym():
             userDict["email"] = data["email"]
             userDict["password"] = data["password"]
             userDict["contact"] = data["contact"]
+            userDict["name"] = data["name"]
 
             del data["addressLine1"]
             del data["city"]

@@ -209,3 +209,15 @@ def getSpecificReviews(gymName,reviewType):
                         print(inst)
                         continue
     return result
+
+def gymLogin(email, password):
+    db = firestore.Client()
+    gymName = ""
+    docs = db.collection(u'GymUsers').document(email).get().to_dict()
+    if docs != None:
+        if docs["password"] == password:
+            gymName = docs["name"]
+            return "Success", gymName
+        else:
+            return "Incorrect Password", gymName
+    return "User Not Found!!", gymName

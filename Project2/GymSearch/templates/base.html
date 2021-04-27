@@ -67,18 +67,16 @@
             });
 
             if(window.location.href.includes("home")){
-                console.log("home");
-                document.getElementById("gymDiv").style.display = "none";
-                document.getElementById("userDiv").style.display = "none";
+                $("#gymRegistration").click(function(){
+                    window.location.href = window.location.origin + "/gyms/add";
+                });
+
                 $("#user").click(function(){
-                    document.getElementById("gymDiv").style.display = "none";
-                    document.getElementById("userDiv").style.display = "block";
+                    window.location.href = window.location.origin + "/list";
                 });
-                $("#gym").click(function(){
-                    document.getElementById("userDiv").style.display = "none";
-                    document.getElementById("gymDiv").style.display = "block";
-                });
-            } else if(window.location.href.includes("add")){
+            }
+                
+            if(window.location.href.includes("add")){
                 let i = 2;
                 document.getElementById('add-new-event').onclick = function () {
                     let template = `
