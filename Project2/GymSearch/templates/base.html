@@ -53,10 +53,16 @@
             $("#reviewDropdown").val('{{reviewType}}');
             $("#reviewDropdown").change(function () {
                 var val = $("#reviewDropdown").val();
+                var parser = new DOMParser;
+                var dom = parser.parseFromString(
+                    '<!doctype html><body>' + '{{gym_id}}',
+                    'text/html');
+                var decoded = dom.body.textContent;
+                //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
                 if(val === 'All'){
-                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}';
+                    window.location.href = window.location.origin + "/gyms/" + decoded;
                 } else {
-                    window.location.href = window.location.origin + "/gyms/" + '{{gym_id}}' + "/" +val;
+                    window.location.href = window.location.origin + "/gyms/" + decoded + "/" +val;
                 } 
             });
 

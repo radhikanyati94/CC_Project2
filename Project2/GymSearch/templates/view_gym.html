@@ -47,9 +47,9 @@
         <p> <b>Overall Rating : </b> {{gym.rating}} </p>
     {% endif %}
 
-    {% if gym.reviews_count %}
+    <!-- {% if gym.reviews_count %}
         <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
-    {% endif %}
+    {% endif %} -->
 
     {% if gym.website %}
         <p> <b>Website : </b> {{gym.website}} </p>
@@ -109,7 +109,7 @@
     <select id="reviewDropdown" name="reviewDropdown">
         <option value="All">All</option>
         <option value="General">General</option>
-        <option value="Covid19">Covid19</option>
+        <option value="Covid-19">Covid-19</option>
         <option value="Equipments">Equipments</option>
         <option value="Management">Management</option>
     </select>
@@ -122,8 +122,8 @@
         <b>Date :</b> {{review.date}} </br>
         <b>Rating :</b> {{review.rating}} </br>
         <b>Review :</b> {{review.review}} </br>
-        {% if review.type %}
-            <b>Type :</b> {{review.type}} </br>
+        {% if review.Type %}
+            <b>Type :</b> {{review.Type}} </br>
         {% endif %}
     </div>
     {% else %}

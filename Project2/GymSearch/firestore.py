@@ -197,17 +197,15 @@ def getSpecificReviews(gymName,reviewType):
     db = firestore.Client()
     result = []
     docs = db.collection(u'Gyms').document(gymName).get().to_dict()
-    for doc in docs:
-        if doc == "Reviews":
-            reviewList = docs[doc]
-            for review in reviewList:
-                try:
-                    if review['type'].lower() == reviewType.lower():
-                        result.append(review)
-                except Exception as inst:
-                    print(inst)
-                    continue
+    if docs != None:
+        for doc in docs:
+            if doc == "Reviews":
+                reviewList = docs[doc]
+                for review in reviewList:
+                    try:
+                        if review['Type'].lower() == reviewType.lower():
+                            result.append(review)
+                    except Exception as inst:
+                        print(inst)
+                        continue
     return result
-
-        
-#getSpecificReviews("Equipments", "Lakeside Fitness")

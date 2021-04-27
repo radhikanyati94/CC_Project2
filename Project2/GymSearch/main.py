@@ -159,6 +159,7 @@ def addGym():
             del data["email"]
             del data["password"]
             
+            #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
             firestore.add_gym_user(userDict)
             return redirect(url_for('.viewGym', gym_id=gymName))
