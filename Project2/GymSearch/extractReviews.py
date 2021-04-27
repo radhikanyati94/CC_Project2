@@ -10,12 +10,12 @@ def document_to_dict(doc):
     doc_dict['id'] = doc.id
     return doc_dict
 
-document_name = "Mountain Fitness Tempe"
+document_name = "AZ Bodybuilding Personal Training Gym & Contest Prep"
 #read the pickle file
-data = pk.load(open("/home/ssridh55/cloudshell_open/getting-started-python/bookshelf/Mountain Fitness Tempe", "rb"))
+data = pk.load(open("/home/ssridh55/cloudshell_open/github_radhikanyati94_cc_project2/Project2/GymSearch/AZ Bodybuilding Personal Training Gym & Contest Prep", "rb"))
 # doc_ref = db.collection(u'Gyms').document(u'Mountain Fitness Tempe')
 
 
-doc_ref = db.collection(u'Gyms').document(u'Mountain Fitness Tempe')
+doc_ref = db.collection(u'Gyms').document(u'AZ Bodybuilding Personal Training Gym & Contest Prep')
 doc_ref.set(data)
 print("done, doc ref: ", doc_ref)

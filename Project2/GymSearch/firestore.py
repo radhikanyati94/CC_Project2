@@ -14,6 +14,7 @@
 
 # [START bookshelf_firestore_client_import]
 from google.cloud import firestore
+import sentimentScore
 # [END bookshelf_firestore_client_import]
 
 
@@ -54,6 +55,22 @@ def list_details():
     #print(docs)
     return docs, last_title
 
+def sort_list_details():
+    db = firestore.Client()
+    query = db.collection(u'Gyms').stream()
+    gymsList = {}
+    last_title = None
+
+    for doc in query:
+        query = db.collection(u'Gyms').document(doc.id)
+        snapshot = query.get()
+        score = document_to_dict(snapshot)['Sentiment Score']
+        gymsList[doc.id] = score
+    
+    sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
+    # print(gymsList)
+    return sortedList, last_title
+
 def read(book_id):
     # [START bookshelf_firestore_client]
     db = firestore.Client()
@@ -85,6 +102,11 @@ def add_review(rev, gymName):
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
+
+    #Add sentiment score
+    score = sentimentScore.sentiment_score(gymName)
+    print(score)
+    gym_ref.update({'SentimentScore': score})
 
 
 def delete(id):

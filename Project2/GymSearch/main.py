@@ -67,9 +67,9 @@ if not app.testing:
 def list():
     # start_after = request.args.get('start_after', None)
     books, last_title = firestore.list_details()
+    # books, last_title = firestore.sort_list_details()
 
     return render_template('list.html', gymNames=books, last_title=last_title)
-
 
 @app.route('/books/<book_id>')
 def view(book_id):
