@@ -14,126 +14,58 @@
 # limitations under the License.
 #}
 
+{# [START form] #}
 {% extends "base.html" %}
+
 {% block content %}
-<div class="media">
-    <div style="float: right;"> <a href="/logout">Logout</a></div>
-  {# [START gym_image] #}
-  <div class="media-left" id="editGymDiv">
-    <img class="gym-image" src="https://placekitten.com/g/128/192">
-  </div>
-  {# [END gym_image] #}
-  <div class="media">
-    <div class="media-right">
-          <a href="/gyms/add/{{gym_id}}" class="btn btn-success btn-sm">
-            <i class="glyphicon glyphicon-plus"></i>
-            Add Review
-        </a>
-    </div>
+<h3>Edit {{gym_id}} </h3>
+
+<form method="POST" enctype='application/json' id="myForm">
+
+  <div class="form-group">
+    <label for="occupancy">Gym Occupancy</label>
+    <input type="text" name="occupancy" id="occupancy" value="{{gym.occupancy}}" class="form-control" />
   </div>
 
-  <div class="media-body">
-    <h2 class="gym-id">
-      {{gym_id}}
-    </h2>
+  <div class="form-group">
+    <label for="covidGuidelines">Covid Guidelines</label>
+    <textarea type="text" name="covidGuidelines" id="covidGuidelines" class="form-control">{{gym.covidGuidelines}}</textarea>
+  </div>
+
+  <label for="events">Fitness Sessions</label>
+   
+  <div id="events">
+    {% for event in gym.events%}
+    <div class="form-group" id="event{{loop.index}}">
+        Type: 
+        <select name="event{{loop.index}}type" id="event{{loop.index}}type" value={{event.type}}>
+            <option value="Yoga">Yoga</option>
+            <option value="HIIT">HIIT</option>
+            <option value="Zumba">Zumba</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Kickboxing">Kickboxing</option>
+            <option value="Full Body Fusion">Full Body Fusion</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Personal Training">Personal Training</option>
+            <option value="Other">Other</option>
+        </select> &emsp;
+        Name: <input name="event{{loop.index}}name" value={{event.name}}> &emsp;
+        Time: <input name="event{{loop.index}}time" value={{event.time}}> &emsp;
+        Days: <input name="event{{loop.index}}days" value={{event.days}}> &emsp;
+        Occupancy: <input name="event{{loop.index}}occupancy" value={{event.occupancy}}> &emsp;
+    </div> 
     
-    {% if gym.location %}
-        <p> <b>Address : </b> {{gym.location}} </p>
-    {% endif %}
-
-    {% if gym.contact %}
-        <p> <b>Contact Number : </b> {{gym.contact}} </p>
-    {% endif %}
-
-    {% if gym.rating %}
-        <p> <b>Overall Rating : </b> {{gym.rating}} </p>
-    {% endif %}
-
-    <!-- {% if gym.reviews_count %}
-        <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
-    {% endif %} -->
-
-    {% if gym.website %}
-        <p> <b>Website : </b> {{gym.website}} </p>
-    {% endif %}
-
-    {% if gym.occupancy %}
-        <p> <b>Occupancy : </b> {{gym.occupancy}} </p>
-    {% endif %}
-
-    {% if gym.covidGuidelines %}
-        <p> <b>Covid Guidelines :</b> {{gym.covidGuidelines}} </p>
-    {% endif %}
-
-    <p><b> Weekly Workout Sessions: </b> </p>
-    {% if gym.events %}    
-    <table style="width:100%">
-        <tr>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Time</th>
-            <th>Days</th>
-            <th>Occupancy</th>
-        </tr>    
-    {% for event in gym.events %}
-    <div class="gym-events">
-        <tr>
-            <td>{{event.type}}</td>
-            <td>{{event.name}}</td>
-            <td>{{event.time}}</td>
-            <td>{{event.days}}</td>
-            <td>{{event.occupancy}}</td>
-        </tr>
-    </div>
-    {% endfor %}
-    </table>
     {% else %}
     <p>No Sessions found</p>
-    {% endif %}
-
-    {% if gym.Time %}
-        <div class="openingHours">
-            <p> <b>Opening Hours</b></p>
-            <ul>
-                <li> Monday : {{gym.Time.Monday}} </li>
-                <li> Tuesday : {{gym.Time.Tuesday}} </li>
-                <li> Wednesday : {{gym.Time.Wednesday}} </li>
-                <li> Thursday : {{gym.Time.Thursday}} </li>
-                <li> Friday : {{gym.Time.Friday}} </li>
-                <li> Saturday : {{gym.Time.Saturday}} </li>
-                <li> Sunday : {{gym.Time.Sunday}} </li>
-            </ul>
-        </div>
-    {% endif %}
-    
-    <h4> <b>Reviews :</b> </h4> 
-    <p>Filter By:
-    <select id="reviewDropdown" name="reviewDropdown">
-        <option value="All">All</option>
-        <option value="General">General</option>
-        <option value="Covid-19">Covid-19</option>
-        <option value="Equipments">Equipments</option>
-        <option value="Management">Management</option>
-    </select>
-    </p>
-
-    {% for review in gym.Reviews %}
-    <div class="gym-reviews">
-        </br>
-        <b>Name :</b> {{review.name}} </br>
-        <b>Date :</b> {{review.date}} </br>
-        <b>Rating :</b> {{review.rating}} </br>
-        <b>Review :</b> {{review.review}} </br>
-        {% if review.Type %}
-            <b>Type :</b> {{review.Type}} </br>
-        {% endif %}
-    </div>
-    {% else %}
-    <p>No Reviews found</p>
     {% endfor %}
+
   </div>
-</div>
+  <a href="javascript:;" id="add-new-event">Add Session</a>
+</br>
 
-
+  <button type="submit" class="btn btn-success">Save</button>
+ 
+</form>
 
 {% endblock %}
+{# [END form] #}

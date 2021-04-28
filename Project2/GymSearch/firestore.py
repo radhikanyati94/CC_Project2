@@ -150,6 +150,12 @@ def update(data, book_id=None):
     book_ref.set(data)
     return document_to_dict(book_ref.get())
 
+def updateGym(data, gym_id=None):
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(gym_id)
+    gym_ref.set(data)
+    return document_to_dict(gym_ref.get())
+
 create = update
 
 def add_review(rev, gymName):
