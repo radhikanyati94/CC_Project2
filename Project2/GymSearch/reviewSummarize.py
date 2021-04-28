@@ -22,14 +22,17 @@ from nltk.tokenize import word_tokenize
 def extract_reviews():
     db = firestore.Client()
     query = list(db.collection(u'Gyms').stream())
-    doc = query[0]
+    print(len(query))
+    # for all_docs in query:
+    # doc = query[all_docs]
+    doc=query[0]
     reviews = []
     gym_ref = db.collection(u'Gyms').document(doc.id)
     snapshot = gym_ref.get().to_dict()["Reviews"]
     for s in snapshot:
         reviews.append(s['review'])
-
-    return reviews 
+    # print(gym_id)
+    return reviews  
 
 def get_vectorized_matrix(t):
     print("in here")

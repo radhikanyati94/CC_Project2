@@ -30,11 +30,26 @@
         <label for="name">City</label>
         <input type="text" name="area" id="name" value="{{area}}" class="form-control"/>
     </div>
+
     <button type="submit" class="btn btn-success">Search</button>
 </form>
 
 
-<h3>Top Gyms near Tempe</h3>
+<p>Filter By Fitness Sessions:
+<select id="fitnessSessionDrops" name="fitnessSessionDrops">
+    <option value="All">All</option>
+    <option value="Yoga">Yoga</option>
+    <option value="HIIT">HIIT</option>
+    <option value="Zumba">Zumba</option>
+    <option value="Pilates">Pilates</option>
+    <option value="Kickboxing">Kickboxing</option>
+    <option value="Full Body Fusion">Full Body Fusion</option>
+    <option value="Cycling">Cycling</option>
+    <option value="Personal Training">Personal Training</option>
+</select>
+</p>
+
+<h3>Top Recommended Gyms</h3>
 <!-- <a href="/books/add" class="btn btn-success btn-sm">
   <i class="glyphicon glyphicon-plus"></i>
   Add book

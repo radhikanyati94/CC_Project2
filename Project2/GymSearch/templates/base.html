@@ -30,12 +30,17 @@
 
         $(document).ready( function() {
 
-        function showPosition(position) {
-        //   x.innerHTML = "Latitude: " + position.coords.latitude + 
-        //   "<br>Longitude: " + position.coords.longitude;
-        console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
-        return [position.coords.latitude, position.coords.longitude];
-        }
+            $("#fitnessSessionDrops").val('{{fitnessType}}');
+            $("#fitnessSessionDrops").change(function () {
+                var val = $("#fitnessSessionDrops").val();
+                var parser = new DOMParser;
+                //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
+                if(val === 'All'){
+                    window.location.href = window.location.origin + "/list";
+                } else {
+                    window.location.href = window.location.origin + "/list/"  + val;
+                } 
+            });
 
             $("#reviewDropdown").val('{{reviewType}}');
             $("#reviewDropdown").change(function () {
