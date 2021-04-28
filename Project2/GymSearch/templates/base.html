@@ -66,16 +66,6 @@
                 } 
             });
 
-            if(window.location.href.includes("home")){
-                $("#gymRegistration").click(function(){
-                    window.location.href = window.location.origin + "/gyms/add";
-                });
-
-                $("#user").click(function(){
-                    window.location.href = window.location.origin + "/list";
-                });
-            }
-                
             if(window.location.href.includes("add")){
                 let i = 2;
                 document.getElementById('add-new-event').onclick = function () {
@@ -122,7 +112,26 @@
                     
                     i++;
                 }
+            } 
+            if('{{hideForm}}' === 'True'){
+                document.getElementById("loginForm").style.display = "none";
             }
+            $("#gymRegistration").click(function(){
+                window.location.href = window.location.origin + "/gyms/add";
+            });
+
+            $("#user").click(function(){
+                window.location.href = window.location.origin + "/list";
+            });
+            $("#gym").click(function(){
+                document.getElementById("loginForm").style.display = "block";
+            });    
+            
+            // } else if(window.location.href.includes("edit")) {
+            //     if('{{session["user"]}}' !== "gym"){
+            //         window.location.href = window.location.origin + "/";
+            //     }
+            // }
 
             $("#forms").submit( function(eventObj) {
                 console.log("here");
@@ -159,10 +168,10 @@
     <div class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
-          <div class="navbar-brand">HomePage</div>
+          <div class="navbar-brand"><a href="/">HomePage</a></div>
         </div>
         <ul class="nav navbar-nav">
-          <li><a href="/">Gyms</a></li>
+          <li><a href="/list">Gyms</a></li>
         </ul>
       </div>
     </div>

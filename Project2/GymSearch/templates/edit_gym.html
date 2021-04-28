@@ -1,0 +1,139 @@
+{#
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+
+{% extends "base.html" %}
+{% block content %}
+<div class="media">
+    <div style="float: right;"> <a href="/logout">Logout</a></div>
+  {# [START gym_image] #}
+  <div class="media-left" id="editGymDiv">
+    <img class="gym-image" src="https://placekitten.com/g/128/192">
+  </div>
+  {# [END gym_image] #}
+  <div class="media">
+    <div class="media-right">
+          <a href="/gyms/add/{{gym_id}}" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>
+            Add Review
+        </a>
+    </div>
+  </div>
+
+  <div class="media-body">
+    <h2 class="gym-id">
+      {{gym_id}}
+    </h2>
+    
+    {% if gym.location %}
+        <p> <b>Address : </b> {{gym.location}} </p>
+    {% endif %}
+
+    {% if gym.contact %}
+        <p> <b>Contact Number : </b> {{gym.contact}} </p>
+    {% endif %}
+
+    {% if gym.rating %}
+        <p> <b>Overall Rating : </b> {{gym.rating}} </p>
+    {% endif %}
+
+    <!-- {% if gym.reviews_count %}
+        <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
+    {% endif %} -->
+
+    {% if gym.website %}
+        <p> <b>Website : </b> {{gym.website}} </p>
+    {% endif %}
+
+    {% if gym.occupancy %}
+        <p> <b>Occupancy : </b> {{gym.occupancy}} </p>
+    {% endif %}
+
+    {% if gym.covidGuidelines %}
+        <p> <b>Covid Guidelines :</b> {{gym.covidGuidelines}} </p>
+    {% endif %}
+
+    <p><b> Weekly Workout Sessions: </b> </p>
+    {% if gym.events %}    
+    <table style="width:100%">
+        <tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Days</th>
+            <th>Occupancy</th>
+        </tr>    
+    {% for event in gym.events %}
+    <div class="gym-events">
+        <tr>
+            <td>{{event.type}}</td>
+            <td>{{event.name}}</td>
+            <td>{{event.time}}</td>
+            <td>{{event.days}}</td>
+            <td>{{event.occupancy}}</td>
+        </tr>
+    </div>
+    {% endfor %}
+    </table>
+    {% else %}
+    <p>No Sessions found</p>
+    {% endif %}
+
+    {% if gym.Time %}
+        <div class="openingHours">
+            <p> <b>Opening Hours</b></p>
+            <ul>
+                <li> Monday : {{gym.Time.Monday}} </li>
+                <li> Tuesday : {{gym.Time.Tuesday}} </li>
+                <li> Wednesday : {{gym.Time.Wednesday}} </li>
+                <li> Thursday : {{gym.Time.Thursday}} </li>
+                <li> Friday : {{gym.Time.Friday}} </li>
+                <li> Saturday : {{gym.Time.Saturday}} </li>
+                <li> Sunday : {{gym.Time.Sunday}} </li>
+            </ul>
+        </div>
+    {% endif %}
+    
+    <h4> <b>Reviews :</b> </h4> 
+    <p>Filter By:
+    <select id="reviewDropdown" name="reviewDropdown">
+        <option value="All">All</option>
+        <option value="General">General</option>
+        <option value="Covid-19">Covid-19</option>
+        <option value="Equipments">Equipments</option>
+        <option value="Management">Management</option>
+    </select>
+    </p>
+
+    {% for review in gym.Reviews %}
+    <div class="gym-reviews">
+        </br>
+        <b>Name :</b> {{review.name}} </br>
+        <b>Date :</b> {{review.date}} </br>
+        <b>Rating :</b> {{review.rating}} </br>
+        <b>Review :</b> {{review.review}} </br>
+        {% if review.Type %}
+            <b>Type :</b> {{review.Type}} </br>
+        {% endif %}
+    </div>
+    {% else %}
+    <p>No Reviews found</p>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+{% endblock %}

@@ -34,17 +34,19 @@
 <form method="POST" enctype='application/json' id="loginForm">
         <div class="form-group">
             <label for="email">Email<span class="required">*</span></label>
-            <textarea name="email" id="email" class="form-control" required>{{email}}</textarea>
+            <input name="email" id="email" class="form-control" required value="{{email}}">
         </div>
 
         <div class="form-group">
             <label for="password">Password<span class="required">*</span></label>
-            <textarea type="password" name="password" id="password" class="form-control" required>{{password}}</textarea>
+            <input type="password" name="password" id="password" class="form-control" required value="{{password}}">
         </div>
 
         <button type="submit" class="btn btn-success">Login</button>
-        <button id="gymRegistration"> Register </button>
+        <button id="gymRegistration" class="btn btn-success"> Register </button>
+        
 </form>
+
 
 {% if message %}
     <span style="color:red">{{message}}</span>
