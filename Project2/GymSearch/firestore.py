@@ -21,6 +21,7 @@ import googlemaps
 from datetime import datetime
 import requests
 import json
+import reviewSummarize
 # [END bookshelf_firestore_client_import]
 
 
@@ -216,11 +217,14 @@ def add_extracted_gym_details(doc_id):
     if details is None:
         return 1
     else:
-    #reviews = details['Reviews']
-    # for r in reviews:
-    #     r['review']
-    #returned_value = call_function_here()
-    # details['summary']: returned_value
+        reviews = details['Reviews']
+        revs = []
+        for r in reviews: 
+            revs.append(r['review'])
+        # print(revs)
+        summ =reviewSummarize.get_vectorized_matrix(revs)
+        # print(summ)
+        details["Summary"] = summ
         gym_ref.set(details, merge=True)
         #Add type to reviews:
         AddReviewType.addType(doc_id)
