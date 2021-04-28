@@ -93,7 +93,7 @@ def get_open_hours(doc_id):
     res = requests.get(endpoint_url, params = params)
     place_details =  json.loads(res.content)
     if len(place_details['result']) == 0:
-        return "Open"
+        return "Open Now!"
     else:
         op = place_details['result']['opening_hours']['open_now']
         if op:
@@ -161,7 +161,7 @@ def add_review(rev, gymName):
     #Add sentiment score
     score = sentimentScore.sentiment_score(gymName)
     print(score)
-    gym_ref.update({'SentimentScore': score})
+    gym_ref.update({'`Sentiment Score`': score})
 
 def add_gym(data):
     db = firestore.Client()
@@ -182,11 +182,23 @@ def add_extracted_gym_details(doc_id):
     area = document_to_dict(snapshot)['Area']
     loc = doc_id + ' ' + area
     details = ExtractGymDetails.extractDetails(loc)
+    if details is None:
+        return 1
+    else:
+    #reviews = details['Reviews']
+    # for r in reviews:
+    #     r['review']
+    #returned_value = call_function_here()
+    # details['summary']: returned_value
+        gym_ref.set(details, merge=True)
+        #Add type to reviews:
+        AddReviewType.addType(doc_id)
 
-    gym_ref.set({details}, merge=True)
-
-    #Add type to reviews:
-    AddReviewType.addType(doc_id)
+        #Add sentiment score
+        score = sentimentScore.sentiment_score(doc_id)
+        gym_ref.set({u'Sentiment Score':score}, merge=True)
+        print("updated database")
+        return 0
 
 def delete(id):
     db = firestore.Client()

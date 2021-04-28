@@ -95,8 +95,9 @@ def list_on_pref():
     # books, last_title = firestore.list_on_pref(area)
     if request.method == 'POST':
         details = request.form
-        print(details)
+        # print(details)
         area = request.form['area']
+        
         books, last_title = firestore.list_on_pref(area)
         return render_template('trial_home.html', gymNames=books, last_title=last_title)
     else:
@@ -182,10 +183,15 @@ def addGym():
             del data["email"]
             del data["password"]
             
-            data["Sentiment Score"] = 0.875
+            #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
             firestore.add_gym_user(userDict)
             #session['user'] = 'gym'
+            
+            flag = firestore.add_extracted_gym_details(gymName)
+            if flag==1:
+                message = "Could not find gym!!"
+                return render_template('add_gym.html', action='Add', gym={}, message=message)
             return redirect(url_for('.editGym', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."

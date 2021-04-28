@@ -28,21 +28,8 @@
 
     <script>
 
-//     $("#forms").submit( function(eventObj) {
-//         console.log("here");
-//       $("<input />").attr("type", "hidden")
-//           .attr("name", loc)
-//           .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
-//           .appendTo("#forms");
-//       return true;
-//   });
-
-    
-
         $(document).ready( function() {
 
-       
- 
         function showPosition(position) {
         //   x.innerHTML = "Latitude: " + position.coords.latitude + 
         //   "<br>Longitude: " + position.coords.longitude;
@@ -133,22 +120,7 @@
             //     }
             // }
 
-            $("#forms").submit( function(eventObj) {
-                console.log("here");
-                $("<input />").attr("type", "hidden")
-                    .attr("name", loc)
-                    .attr("value", navigator.geolocation.getCurrentPosition(showPosition))
-                    .appendTo("#forms");
-                return true;
-            });
 
-            function showPosition(position) {
-                //   x.innerHTML = "Latitude: " + position.coords.latitude + 
-                //   "<br>Longitude: " + position.coords.longitude;
-                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
-                return [position.coords.latitude, position.coords.longitude];
-            } 
-            
         });
     </script>
 

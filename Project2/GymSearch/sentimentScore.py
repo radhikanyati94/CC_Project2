@@ -18,7 +18,7 @@ def sentiment_score(doc_id):
     reviews = document_to_dict(snapshot)['Reviews']
     sid = SentimentIntensityAnalyzer()
     scores = []
-    print("in here :", document_to_dict(snapshot)['Sentiment Score'])
+    # print("in here :", document_to_dict(snapshot)['Sentiment Score'])
 
     for r in reviews:
         # print
