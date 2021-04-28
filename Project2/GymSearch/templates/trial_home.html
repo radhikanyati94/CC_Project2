@@ -27,7 +27,7 @@
 <h3> Enter Area</h3>
 <form id = "forms" method="POST", enctype="multipart/form-data">
     <div class="form-group">
-        <label for="name">Area</label>
+        <label for="name">City</label>
         <input type="text" name="area" id="name" value="{{area}}" class="form-control"/>
     </div>
     <button type="submit" class="btn btn-success">Search</button>
@@ -42,11 +42,8 @@
 
 {% for gName in gymNames %}
 <div class="media">
-  <a href="/gyms/{{gName}}">
-    <div class="media-body">
-      <h4>{{gName}} <span style="padding-left: 15px;"> {{gymNames[gName]}} </h4>
-    </div>
-  </a>
+  <h4><a href="/gyms/{{gName}}"> <!-- <div class="media-body"> -->{{gName}}<!-- </div> --></a> 
+  <span style="padding-left: 15px; color:red"> {{gymNames[gName]}}</span></h4>
 </div>
 {% else %}
 <p>No gyms found</p>

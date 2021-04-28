@@ -17,8 +17,9 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="media">
+    <div style="float: right;"> <a href="/logout">Logout</a></div>
   {# [START gym_image] #}
-  <div class="media-left">
+  <div class="media-left" id="editGymDiv">
     <img class="gym-image" src="https://placekitten.com/g/128/192">
   </div>
   {# [END gym_image] #}
@@ -35,6 +36,7 @@
     <h2 class="gym-id">
       {{gym_id}}
     </h2>
+    
     {% if gym.location %}
         <p> <b>Address : </b> {{gym.location}} </p>
     {% endif %}

@@ -16,7 +16,7 @@ import logging
 
 import firestore
 from flask import current_app, flash, Flask, Markup, redirect, render_template
-from flask import request, url_for
+from flask import request, url_for, session
 from google.cloud import error_reporting
 import google.cloud.logging
 import storage
@@ -62,15 +62,32 @@ if not app.testing:
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
 
-# @app.route('/')
-# def list():
-#     # start_after = request.args.get('start_after', None)
-#     books, last_title = firestore.list_details()
-#     # books, last_title = firestore.sort_list_details()
-
-#     return render_template('list.html', gymNames=books, last_title=last_title)
-
 @app.route('/', methods=['GET', 'POST'])
+def home():
+    result = ""
+    hideForm = True
+    if request.method == 'POST':
+        details = request.form
+        result, gymName = firestore.gymLogin(details["email"], details["password"])
+        hideForm = False
+        if result == "Success":
+            
+            #session['user'] = 'gym'
+            return redirect(url_for('.editGym', gym_id=gymName))
+    return render_template('home.html', message=result, hideForm=hideForm)
+
+@app.route('/logout')
+def logout():
+    #session.pop('user', None)
+    return redirect(url_for('.home', message="", hideForm=True))
+
+# @app.route('/list')
+# def list():
+#     gymNames, last_title = firestore.list_details()
+
+#     return render_template('list.html', gymNames=gymNames, last_title=last_title)
+
+@app.route('/list', methods=['GET', 'POST'])
 def list_on_pref():
    
     # data = request.form.to_dict(flat=True)
@@ -78,8 +95,9 @@ def list_on_pref():
     # books, last_title = firestore.list_on_pref(area)
     if request.method == 'POST':
         details = request.form
-        print(details)
+        # print(details)
         area = request.form['area']
+        
         books, last_title = firestore.list_on_pref(area)
         return render_template('trial_home.html', gymNames=books, last_title=last_title)
     else:
@@ -98,6 +116,11 @@ def view(book_id):
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/edit')
+def editGym(gym_id):
+    gym = firestore.readGym(gym_id)
+    return render_template('edit_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
 
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
@@ -146,10 +169,11 @@ def addGym():
                     break 
             data["events"] = events
             data["location"] = data["addressLine1"]+ ", " + data["city"] + ", " + data["state"] + " " + data["zipCode"]
-            data["Area"] = "Tempe"
+            data["Area"] = data["city"]
             userDict["email"] = data["email"]
             userDict["password"] = data["password"]
             userDict["contact"] = data["contact"]
+            userDict["name"] = data["name"]
 
             del data["addressLine1"]
             del data["city"]
@@ -159,9 +183,16 @@ def addGym():
             del data["email"]
             del data["password"]
             
+            #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
             firestore.add_gym_user(userDict)
-            return redirect(url_for('.viewGym', gym_id=gymName))
+            #session['user'] = 'gym'
+            
+            flag = firestore.add_extracted_gym_details(gymName)
+            if flag==1:
+                message = "Could not find gym!!"
+                return render_template('add_gym.html', action='Add', gym={}, message=message)
+            return redirect(url_for('.editGym', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."
 

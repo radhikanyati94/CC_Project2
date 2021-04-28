@@ -24,29 +24,32 @@
   {% endfor %}
 {% endwith %}
 
-<button id="user">User</button> &emsp; &emsp;
-<button id="gym">Gym</button> 
-</br> </br>
-<div id="userDiv" class="form-group">
-    <button id="userLogin">User Login</button> &emsp; &emsp;
-    <button id="userRegistration">User Registration</button>
-</div>
-
-<div id="gymDiv">
-    <button id="gymLogin">Gym Login</button> &emsp; &emsp;
-    <button id="gymRegistration">Gym Registration</button>
+<div>
+    <button id="user">User</button> &emsp; &emsp;
+    <button id="gym">Gym</button> &emsp; &emsp;
 </div>
 
 </br> </br>
 
-<form method="POST" enctype='application/json'>
-    <div id="userLoginForm">
-        
-    </div>
+<form method="POST" enctype='application/json' id="loginForm">
+        <div class="form-group">
+            <label for="email">Email<span class="required">*</span></label>
+            <input name="email" id="email" class="form-control" required value="{{email}}">
+        </div>
 
-    <div id="gymLoginForm">
+        <div class="form-group">
+            <label for="password">Password<span class="required">*</span></label>
+            <input type="password" name="password" id="password" class="form-control" required value="{{password}}">
+        </div>
+
+        <button type="submit" class="btn btn-success">Login</button>
+        <button id="gymRegistration" class="btn btn-success"> Register </button>
         
-    </div>
 </form>
+
+
+{% if message %}
+    <span style="color:red">{{message}}</span>
+{% endif %}
 
 {% endblock %}

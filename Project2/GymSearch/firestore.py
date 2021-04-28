@@ -93,7 +93,7 @@ def get_open_hours(doc_id):
     res = requests.get(endpoint_url, params = params)
     place_details =  json.loads(res.content)
     if len(place_details['result']) == 0:
-        return "Open"
+        return "Open Now!"
     else:
         op = place_details['result']['opening_hours']['open_now']
         if op:
@@ -122,14 +122,6 @@ def list_on_pref(area):
         op = get_open_hours(l)
         dict_list[l] = op
     return dict_list, last_title
-
-# @app.route('/gyms/<gym_id>')
-def viewGym(gym_id):
-    gym = firestore.readGym(gym_id)
-    review_summary=reviewSummarize.get_vectorized_matrix(reviewSummarize.extract_reviews())
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id)
-    # , review_summary=review_summary)
-
 
 def read(book_id):
     # [START bookshelf_firestore_client]
@@ -168,7 +160,7 @@ def add_review(rev, gymName):
     #Add sentiment score
     score = sentimentScore.sentiment_score(gymName)
     print(score)
-    gym_ref.update({'SentimentScore': score})
+    gym_ref.update({'`Sentiment Score`': score})
 
 def add_gym(data):
     db = firestore.Client()
@@ -189,11 +181,23 @@ def add_extracted_gym_details(doc_id):
     area = document_to_dict(snapshot)['Area']
     loc = doc_id + ' ' + area
     details = ExtractGymDetails.extractDetails(loc)
+    if details is None:
+        return 1
+    else:
+    #reviews = details['Reviews']
+    # for r in reviews:
+    #     r['review']
+    #returned_value = call_function_here()
+    # details['summary']: returned_value
+        gym_ref.set(details, merge=True)
+        #Add type to reviews:
+        AddReviewType.addType(doc_id)
 
-    gym_ref.set({details}, merge=True)
-
-    #Add type to reviews:
-    AddReviewType.addType(doc_id)
+        #Add sentiment score
+        score = sentimentScore.sentiment_score(doc_id)
+        gym_ref.set({u'Sentiment Score':score}, merge=True)
+        print("updated database")
+        return 0
 
 def delete(id):
     db = firestore.Client()
@@ -204,17 +208,27 @@ def getSpecificReviews(gymName,reviewType):
     db = firestore.Client()
     result = []
     docs = db.collection(u'Gyms').document(gymName).get().to_dict()
-    for doc in docs:
-        if doc == "Reviews":
-            reviewList = docs[doc]
-            for review in reviewList:
-                try:
-                    if review['type'].lower() == reviewType.lower():
-                        result.append(review)
-                except Exception as inst:
-                    print(inst)
-                    continue
+    if docs != None:
+        for doc in docs:
+            if doc == "Reviews":
+                reviewList = docs[doc]
+                for review in reviewList:
+                    try:
+                        if review['Type'].lower() == reviewType.lower():
+                            result.append(review)
+                    except Exception as inst:
+                        print(inst)
+                        continue
     return result
 
-        
-#getSpecificReviews("Equipments", "Lakeside Fitness")
+def gymLogin(email, password):
+    db = firestore.Client()
+    gymName = ""
+    docs = db.collection(u'GymUsers').document(email).get().to_dict()
+    if docs != None:
+        if docs["password"] == password:
+            gymName = docs["name"]
+            return "Success", gymName
+        else:
+            return "Incorrect Password", gymName
+    return "User Not Found!!", gymName
