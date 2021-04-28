@@ -173,6 +173,7 @@ def addGym():
             #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
             firestore.add_gym_user(userDict)
+            firestore.add_extracted_gym_details(gymName)
             return redirect(url_for('.viewGym', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."

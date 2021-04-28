@@ -15,7 +15,7 @@ def extractDetails(location):
 
     placeId = geocode_result['candidates'][0]['place_id']
 
-    fields = ['url', 'formatted_address', 'name', 'formatted_phone_number', 'opening_hours', 'website', 'rating']#, 'review']
+    fields = ['url', 'formatted_address', 'name', 'formatted_phone_number', 'opening_hours', 'website', 'rating', 'review']
     endpoint_url = "https://maps.googleapis.com/maps/api/place/details/json"
     params = {
         'placeid': placeId,
@@ -24,15 +24,23 @@ def extractDetails(location):
     }
     res = requests.get(endpoint_url, params = params)
     place_details =  json.loads(res.content)
-    print(place_details['result'])
-
+    # print(place_details['result'])
+    revs = []
+    reviewsObtained = place_details['result']['reviews']
+    for r in reviewsObtained:
+        reviewforthis = {}
+        reviewforthis['date'] = r['relative_time_description']
+        reviewforthis['name'] = r['author_name']
+        reviewforthis['rating'] = str(r['rating']) + ' stars'
+        reviewforthis['review'] = r['text']
+        revs.append(reviewforthis)
     result = {}
-    result['location'] = place_details['result']['formatted_address']
+    # result['location'] = place_details['result']['formatted_address']
     result['rating'] = place_details['result']['rating']
     result['website'] = place_details['result']['website']
     result['place_id'] = placeId
-    result['Reviews'] = place_details['result']['review']
-    result['Time'] = place_details['result']['weekday_text']
+    result['Reviews'] = revs
+    result['Time'] = place_details['result']['opening_hours']['weekday_text']
     return result
 
 # extractDetails("Mountainside Fitness Tempe/Marina Heights, 300 E Rio Salado Pkwy #102, Tempe, AZ 85281, USA")

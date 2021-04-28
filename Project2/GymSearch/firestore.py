@@ -161,7 +161,7 @@ def add_review(rev, gymName):
     #Add sentiment score
     score = sentimentScore.sentiment_score(gymName)
     print(score)
-    gym_ref.update({'SentimentScore': score})
+    gym_ref.update({'`Sentiment Score`': score})
 
 def add_gym(data):
     db = firestore.Client()
@@ -182,11 +182,14 @@ def add_extracted_gym_details(doc_id):
     area = document_to_dict(snapshot)['Area']
     loc = doc_id + ' ' + area
     details = ExtractGymDetails.extractDetails(loc)
-
-    gym_ref.set({details}, merge=True)
-
+    gym_ref.set(details, merge=True)
     #Add type to reviews:
     AddReviewType.addType(doc_id)
+
+    #Add sentiment score
+    score = sentimentScore.sentiment_score(doc_id)
+    gym_ref.set({u'Sentiment Score':score}, merge=True)
+    print("updated database")
 
 def delete(id):
     db = firestore.Client()
