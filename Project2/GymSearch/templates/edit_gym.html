@@ -14,9 +14,108 @@
 # limitations under the License.
 #}
 
-{# [START form] #}
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>GymSearch - on Google Cloud Platform</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://rawgit.com/cezary/JSONForms/master/dist/json-forms.min.js"></script>
 
+    <script>
+        $(document).ready( function() {
+            let i = parseInt('{{eventNum}}');
+                console.log(i);
+                var k;
+                try {
+                    var temp = JSON.parse('{{ gym["events"] | tojson | safe}}');
+                    for (k = 0; k < temp.length; k++) {
+                        
+                        console.log(temp[k].type);
+                        var a = parseInt(k) + 1;
+                        console.log("#event"+a+"type");
+                        $("#event"+a+"type").val(temp[k].type);
+                    }
+                }
+                catch(err) {
+                    console.log(err);
+                }
+                
+                document.getElementById('add-new-event').onclick = function () {
+                    let template = `
+                    Type: 
+                    <select name="event1type" id="event1type">
+                        <option value="Yoga">Yoga</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="Zumba">Zumba</option>
+                        <option value="Pilates">Pilates</option>
+                        <option value="Kickboxing">Kickboxing</option>
+                        <option value="Full Body Fusion">Full Body Fusion</option>
+                        <option value="Cycling">Cycling</option>
+                        <option value="Personal Training">Personal Training</option>
+                        <option value="Other">Other</option>
+                    </select> &emsp;
+                    Name: <input name="event1name"> &emsp;
+                    Time: <input name="event1time"> &emsp;
+                    Days: <input name="event1days"> &emsp;
+                    Occupancy: <input name="event1occupancy">
+                    `;
+
+                    let div = document.createElement('div');
+                    div.innerHTML = template;
+                    div.id = "event"+i;
+                    $('#events').append(div);
+                    $("#event"+i).addClass("form-group");
+                    $("#event"+i).find('input').each(function() {
+                        if($(this).attr('name') ===  "event1name"){
+                            $(this).attr('name', "event"+i+"name");
+                        } else if($(this).attr('name') ===  "event1time"){
+                            $(this).attr('name', "event"+i+"time");
+                        } else if($(this).attr('name') ===  "event1days") {
+                            $(this).attr('name', "event"+i+"days");
+                        } else {
+                            $(this).attr('name', "event"+i+"occupancy");
+                        }                    
+                    });
+                    $("#event"+i).find('select').each(function() {
+                        if($(this).attr('name') ===  "event1type"){
+                            $(this).attr('name', "event"+i+"type");
+                        }
+                    });
+                    
+                    i++;
+                }
+        });
+    </script>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align:center;
+        }
+
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <div class="navbar-brand"><a href="/">HomePage</a></div>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/list">Gyms</a></li>
+        </ul>
+      </div>
+    </div>
+<div class="container">
+{# [START form] #}
 {% block content %}
 <h3>Edit {{gym_id}} </h3>
 
@@ -69,3 +168,6 @@
 
 {% endblock %}
 {# [END form] #}
+</div>
+</body>
+</html>

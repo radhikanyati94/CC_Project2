@@ -58,20 +58,6 @@
                 } 
             });
 
-            if(window.location.href.includes("edit")){
-                let i = parseInt('{{eventNum}}');
-                console.log(i);
-                var k;
-                var temp = JSON.parse('{{ gym["events"] | tojson | safe}}');
-                for (k = 0; k < temp.length; k++) {
-                    
-                    console.log(temp[k].type);
-                    var a = parseInt(k) + 1;
-                    console.log("#event"+a+"type");
-                    $("#event"+a+"type").val(temp[k].type);
-                }
-            }
-
             if(window.location.href.includes("add")){
                 let i = parseInt('{{eventNum}}');
                 console.log(i);

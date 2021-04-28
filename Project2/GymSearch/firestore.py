@@ -176,7 +176,7 @@ def update(data, book_id=None):
 def updateGym(data, gym_id=None):
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gym_id)
-    gym_ref.set(data)
+    gym_ref.update(data)
     return document_to_dict(gym_ref.get())
 
 create = update
