@@ -61,6 +61,7 @@ if not app.testing:
     client = google.cloud.logging.Client()
     # Attaches a Google Stackdriver logging handler to the root logger
     client.setup_logging()
+global city
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -96,15 +97,21 @@ def list_on_pref():
     if request.method == 'POST':
         details = request.form
         # print(details)
-        area = request.form['area']
-        
+        area = details['area']
+        global city
+        city = area
         books, last_title = firestore.list_on_pref(area)
-        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
     else:
         books = []
         last_title = None
-        return render_template('trial_home.html', gymNames=books, last_title=last_title)
+        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
     # return render_template('trial_home.html')
+
+@app.route('/list/<filter_type>', methods=['GET', 'POST'])
+def filter_list_on_pref(filter_type):
+    books, last_title = firestore.list_gyms_on_filter(city, filter_type)
+    return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type)
 
 
 @app.route('/books/<book_id>')

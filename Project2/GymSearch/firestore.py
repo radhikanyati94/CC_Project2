@@ -123,6 +123,29 @@ def list_on_pref(area):
         dict_list[l] = op
     return dict_list, last_title
 
+def list_gyms_on_filter(area, filter_type):
+    db = firestore.Client()
+    query = db.collection(u'Gyms').stream()
+    gymsList = {}
+    last_title = None
+    for doc in query:
+        gym_ref = db.collection(u'Gyms').document(doc.id)
+        snapshot = gym_ref.get()
+        if document_to_dict(snapshot)['Area'] == area:
+            events = document_to_dict(snapshot)['events']
+            for e in events:
+                if e['type'] == filter_type:
+                    sentScore = document_to_dict(snapshot)['Sentiment Score']
+                    gymsList[doc.id] = sentScore
+                    break
+    sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
+    print(sortedList)
+    dict_list = {}
+    for l in sortedList:
+        op = get_open_hours(l)
+        dict_list[l] = op
+    return dict_list, last_title
+
 
 def read(book_id):
     # [START bookshelf_firestore_client]
@@ -165,7 +188,9 @@ def add_review(rev, gymName):
 
 def add_gym(data):
     db = firestore.Client()
-    gym_ref = db.collection(u'Gyms').document(data["name"])
+    print(type(data["name"]))
+    gymname = data["name"]
+    gym_ref = db.collection(u'Gyms').document(gymname)
     del data["name"]
     gym_ref.set(data)
 
