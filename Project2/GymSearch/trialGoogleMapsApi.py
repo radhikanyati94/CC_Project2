@@ -99,7 +99,24 @@ def document_to_dict(doc):
 
 
 
+db = firestore.Client()
+query = db.collection(u'Gyms').document('The Gym at City Creek')
+snapshot = query.get()
+summary = document_to_dict(snapshot)['Summary']
+print(summary)
+for s in summary:
+    for k in s:
+        print(k)
 
+test_list = [{'gfg' : 1, 'is' : 2, 'good' : 3}, 
+             {'gfg' : 2}, {'best' : 3, 'gfg' : 4}]
+  
+# printing original list
+print("The original list is : " + str(test_list))
+  
+# Using list comprehension
+# Get values of particular key in list of dictionaries
+res = [ sub['gfg'] for sub in test_list ]
 
 
 
@@ -149,6 +166,8 @@ def document_to_dict(doc):
 # print(gyms)
 # sortedList = [(a, b) for a, b, c in gyms]
 # print(sortedList)
+<<<<<<< HEAD
+=======
 
 # db = firestore.Client()
 # gym_ref = db.collection(u'Gyms').document('AZ Bodybuilding Personal Training Gym & Contest Prep')
@@ -164,3 +183,4 @@ s = "Spot Fitness and Spa"
 news = urllib.parse.quote(s)
 u = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + news
 print(u)
+>>>>>>> b45f5e08cef64cf9b652453acb86704965cc6d42
