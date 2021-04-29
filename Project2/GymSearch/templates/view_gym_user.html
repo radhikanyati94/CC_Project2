@@ -17,11 +17,12 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="media">
-    <div style="float: right;"> <a href="/logout" class="btn btn-success btn-sm">Logout</a>
+    <div style="float: right;"> 
     <a href="/gyms/{{gym_id}}/edit" class="btn btn-success btn-sm">
         <i class="glyphicon glyphicon-edit"></i>
         Edit Gym
     </a>
+    <a href="/logout" class="btn btn-success btn-sm">Logout</a>
   </div>
   {# [START gym_image] #}
   <!-- <div class="media-left">
