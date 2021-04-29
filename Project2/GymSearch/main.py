@@ -84,6 +84,8 @@ def home():
         session.pop('typeCityMessage', None)
     if 'city' in session:
         session.pop('city', None)
+    if "filter_type" in session:
+        session.pop('filter_type', None)
 
     result = ""
     hideForm = True
@@ -115,7 +117,7 @@ def list_on_pref():
         session['list_with_hours'] = books
         session['full_list_with_hours'] = books
         session["filter_type"] = "All"
-        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All", message=message, area=session["city"], fitnessHour="All", sortBy="Recommended")
+        return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType="All", message=message, area=session["city"], fitnessHour="All", sortBy="Recommended")
     else:
         if "typeCityMessage" in session and 'city' not in session:
             message = session["typeCityMessage"]
@@ -129,7 +131,11 @@ def list_on_pref():
             city = session['city']
         else:
             city=""
-        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All", message=message, area=city, fitnessHour="All", sortBy="Recommended")
+        if 'filter_type' in session:
+            filter_type = session["filter_type"]
+        else:
+            filter_type = "All"
+        return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=city, fitnessHour="All", sortBy="Recommended")
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
 def filter_list_on_pref(filter_type):
@@ -143,23 +149,18 @@ def filter_list_on_pref(filter_type):
         session['gymList'] = sortedList
         session['list_with_hours'] = books
         session["filter_type"] = filter_type
-        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=session["city"], fitnessHour="All", sortBy="Recommended")
+        return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=session["city"], fitnessHour="All", sortBy="Recommended")
 
 @app.route('/list/hours/<filter_hour>', methods=['GET', 'POST'])
 def filter_list_on_hours(filter_hour):
     books, last_title = firestore.list_gyms_on_filter_hours(session['city'], filter_hour, session['list_with_hours'])
-    return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessHour=filter_hour, fitnessType=session['filter_type'], area=session["city"],  sortBy="Recommended")
+    return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessHour=filter_hour, fitnessType=session['filter_type'], area=session["city"],  sortBy="Recommended")
 
 @app.route('/list/distance/<user_location>', methods=['GET', 'POST'])
 def sort_list_by_distance(user_location):
     # print("here in sort by distance")
     books, last_title = firestore.gyms_sorted_by_distance(user_location, session['list_with_hours'], session['city'])
-    return render_template('trial_home.html', gymNames=books, last_title=last_title, userLocation=user_location, fitnessType=session['filter_type'], area=session["city"],  sortBy="Distance", fitnessHour= "All" )
-
-@app.route('/books/<book_id>')
-def view(book_id):
-    book = firestore.read(book_id)
-    return render_template('view.html', book=book)
+    return render_template('gym_list.html', gymNames=books, last_title=last_title, userLocation=user_location, fitnessType=session['filter_type'], area=session["city"],  sortBy="Distance", fitnessHour= "All" )
 
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
@@ -207,8 +208,6 @@ def addReview(gym_id):
         data = request.form.to_dict(flat=True)
         data["date"] = datetime.datetime.now()
         firestore.add_review(data, gym_id)
-        #print("done for ", g)
-
         return redirect(url_for('.viewGym', gym_id=gym_id))
 
     return render_template('add_review.html', action='Add', gyms={}, gymName=gym_id)
@@ -254,10 +253,8 @@ def addGym():
             del data["email"]
             del data["password"]
             
-            #data["Sentiment Score"] = 0.875
             firestore.add_gym(data)
             firestore.add_gym_user(userDict)
-            #session['user'] = 'gym'
             
             flag = firestore.add_extracted_gym_details(gymName)
             if flag==1:
@@ -308,38 +305,14 @@ def editGym(gym_id):
 
 def send_emails(gym_id):
     subscribers, parsed_url = firestore.getSubscribers(gym_id)
-    msg = Message('Hello', sender = 'noreply.gymsearch@gmail.com', recipients = subscribers)
-    # msg.body = "Hello User, Gym information is updated ! https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/Spot%20Fitness%20and%20Spa"
-    msg.body = "Hello Subscriber, " + gym_id + " gym's information has been updated! Check it out at "+ parsed_url
-    mail.send(msg)
-    return "Sent"
-
-@app.route('/books/<book_id>/edit', methods=['GET', 'POST'])
-def edit(book_id):
-    book = firestore.read(book_id)
-
-    if request.method == 'POST':
-        data = request.form.to_dict(flat=True)
-
-        # If an image was uploaded, update the data to point to the new image.
-        image_url = upload_image_file(request.files.get('image'))
-
-        if image_url:
-            data['imageUrl'] = image_url
-
-        book = firestore.update(data, book_id)
-
-        return redirect(url_for('.view', book_id=book['id']))
-
-    return render_template('form.html', action='Edit', book=book)
-
-
-
-@app.route('/books/<book_id>/delete')
-def delete(book_id):
-    firestore.delete(book_id)
-    return redirect(url_for('.list'))
-
+    if subscribers:
+        msg = Message('Hello', sender = 'noreply.gymsearch@gmail.com', recipients = subscribers)
+        # msg.body = "Hello User, Gym information is updated ! https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/Spot%20Fitness%20and%20Spa"
+        msg.body = "Hello Subscriber, " + gym_id + " gym's information has been updated! Check it out at "+ parsed_url
+        mail.send(msg)
+        return "Sent"
+    else:
+        return "No subscribers"
 
 @app.route('/logs')
 def logs():
