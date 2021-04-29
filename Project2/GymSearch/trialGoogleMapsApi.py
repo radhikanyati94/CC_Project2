@@ -166,3 +166,21 @@ res = [ sub['gfg'] for sub in test_list ]
 # print(gyms)
 # sortedList = [(a, b) for a, b, c in gyms]
 # print(sortedList)
+<<<<<<< HEAD
+=======
+
+# db = firestore.Client()
+# gym_ref = db.collection(u'Gyms').document('AZ Bodybuilding Personal Training Gym & Contest Prep')
+# snapshot = gym_ref.get()
+# ret_list_of_subs = []
+# subscribers = document_to_dict(snapshot)['Subscribers']
+# for s in subscribers:
+#     ret_list_of_subs.append(s)
+# print(ret_list_of_subs)
+
+import urllib.parse
+s = "Spot Fitness and Spa"
+news = urllib.parse.quote(s)
+u = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + news
+print(u)
+>>>>>>> b45f5e08cef64cf9b652453acb86704965cc6d42

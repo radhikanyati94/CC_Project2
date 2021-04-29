@@ -17,6 +17,7 @@ import logging
 import firestore
 from flask import current_app, flash, Flask, Markup, redirect, render_template
 from flask import request, url_for, session
+from flask_mail import Mail, Message
 from google.cloud import error_reporting
 import google.cloud.logging
 import storage
@@ -54,6 +55,15 @@ app.config.update(
 
 app.debug = False
 app.testing = False
+mail= Mail(app)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'noreply.gymsearch@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Test@12345'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
+
 
 # Configure logging
 if not app.testing:
@@ -73,6 +83,8 @@ def home():
         session.pop('list_with_hours', None)
     if 'gym_full_list' in session:
         session.pop('gym_full_list', None)
+    if 'typeCityMessage' in session:
+        session.pop('typeCityMessage', None)
 
     result = ""
     hideForm = True
@@ -102,9 +114,11 @@ def list_on_pref():
     # area = "Tempe"
     # books, last_title = firestore.list_on_pref(area)
     if request.method == 'POST':
+        message=""
         details = request.form
         # print(details)
         area = details['area']
+        print(area)
         global city
         city = area
         books, last_title, sortedList = firestore.list_on_pref(area)
@@ -114,8 +128,12 @@ def list_on_pref():
         session['full_list_with_hours'] = books
         print("session gymList : ", session['gymList'])
         print("session with gyms and hours : ", session['list_with_hours'])
-        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
+        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All", message=message)
     else:
+        if "typeCityMessage" in session:
+            message = session["typeCityMessage"]
+        else:
+            message=""
         books = []
         last_title = None
         if 'list_with_hours' in session:
@@ -123,19 +141,29 @@ def list_on_pref():
             books = session['full_list_with_hours']
             print(" inside else, session gymList : ", session['gymList'])
             print("session with gyms and hours : ", session['list_with_hours'])
-        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
+        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All", message=message)
     # return render_template('trial_home.html')
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
 def filter_list_on_pref(filter_type):
-    print("inside filter type, session gymList : ", session['gymList'])
-    print("session with gyms and hours : ", session['list_with_hours'])
-    books, last_title, sortedList = firestore.list_gyms_on_filter(city, filter_type, session['gym_full_list'])
-    session['gymList'] = sortedList
-    session['list_with_hours'] = books
-    print("after filter type, session gymList : ", session['gymList'])
-    print("session with gyms and hours : ", session['list_with_hours'])
-    return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type)
+    message = ""
+    if 'gym_full_list' not in session:
+        message = "Please enter city first!"
+        session["typeCityMessage"] = message
+        # books={}
+        # last_title = None
+        # print("here: ", books)
+        # return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All", message=message)
+        return redirect(url_for('.list_on_pref'))
+    else:
+        print("inside filter type, session gymList : ", session['gymList'])
+        print("session with gyms and hours : ", session['list_with_hours'])
+        books, last_title, sortedList = firestore.list_gyms_on_filter(city, filter_type, session['gym_full_list'])
+        session['gymList'] = sortedList
+        session['list_with_hours'] = books
+        print("after filter type, session gymList : ", session['gymList'])
+        print("session with gyms and hours : ", session['list_with_hours'])
+        return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message)
 
 @app.route('/list/hours/<filter_hour>', methods=['GET', 'POST'])
 def filter_list_on_hours(filter_hour):
@@ -162,19 +190,41 @@ def view(book_id):
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+        
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message="")
 
 @app.route('/gyms/<gym_id>/view')
 def viewForGymUser(gym_id):
     gym = firestore.readGym(gym_id)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/subscribe')
+def subscribe(gym_id):
+    print(request.args.get('email'))
+    print(gym_id)
+    gym = firestore.add_subscriber(request.args.get('email'), gym_id)
+    
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message = "Subscribed Successfully!")
 
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
     gym = firestore.readGym(gym_id)
     gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type, message="")
 
+@app.route('/gyms/user/<gym_id>/<review_type>')
+def filterGymUser(gym_id, review_type):
+    gym = firestore.readGym(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+    return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
 def addReview(gym_id):
@@ -267,11 +317,28 @@ def editGym(gym_id):
             else:
                 break 
         data["events"] = events
-        data["Area"] = "Seattle"
+        data["Time"] = {"Monday" : data["Monday"], "Tuesday" : data["Tuesday"], "Wednesday" : data["Wednesday"], "Thursday" : data["Thursday"], "Friday" : data["Friday"], "Saturday" : data["Saturday"], "Sunday" : data["Sunday"]}
+        del data["Monday"]
+        del data["Tuesday"]
+        del data["Wednesday"]
+        del data["Thursday"]
+        del data["Friday"]
+        del data["Saturday"]
+        del data["Sunday"]
         gym = firestore.updateGym(data, gym_id)
+        status = send_emails(gym_id)
+        print(status)
         return redirect(url_for('.viewForGymUser', gym_id=gym_id)) 
 
     return render_template('edit_gym.html', gym=gym, gym_id=gym_id, eventNum=len(gym["events"])+1)
+
+def send_emails(gym_id):
+    subscribers, parsed_url = firestore.getSubscribers(gym_id)
+    msg = Message('Hello', sender = 'noreply.gymsearch@gmail.com', recipients = subscribers)
+    # msg.body = "Hello User, Gym information is updated ! https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/Spot%20Fitness%20and%20Spa"
+    msg.body = "Hello Subscriber, " + gym_id + " gym's information has been updated! Check it out at "+ parsed_url
+    mail.send(msg)
+    return "Sent"
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])
 def edit(book_id):

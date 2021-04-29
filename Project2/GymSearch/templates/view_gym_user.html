@@ -55,8 +55,10 @@
         <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
     {% endif %} -->
 
-    {% if gym.website %}
-        <p> <b>Website : </b> {{gym.website}} </p>
+    {% if gym.website and gym.website != "NA" %}
+        <p> <b>Website : </b> <a href={{gym.website}}>{{gym.website}}</a> </p>
+    {% else %}
+        <p> <b>Website : </b> N/A</p>
     {% endif %}
 
     {% if gym.occupancy %}
@@ -97,20 +99,64 @@
         <div class="openingHours">
             <p> <b>Opening Hours</b></p>
             <ul>
-                <li> Monday : {{gym.Time.Monday}} </li>
-                <li> Tuesday : {{gym.Time.Tuesday}} </li>
-                <li> Wednesday : {{gym.Time.Wednesday}} </li>
-                <li> Thursday : {{gym.Time.Thursday}} </li>
-                <li> Friday : {{gym.Time.Friday}} </li>
-                <li> Saturday : {{gym.Time.Saturday}} </li>
-                <li> Sunday : {{gym.Time.Sunday}} </li>
+                {% if gym.Time.Monday %}
+                    <li> Monday : {{gym.Time.Monday}} </li>
+                {% else %}
+                    <li> Monday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Tuesday %}
+                    <li> Tuesday : {{gym.Time.Tuesday}} </li>
+                {% else %}
+                    <li> Tuesday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Wednesday %}
+                    <li> Wednesday : {{gym.Time.Wednesday}} </li>
+                {% else %}
+                    <li> Wednesday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Thursday %}
+                    <li> Thursday : {{gym.Time.Thursday}} </li>
+                {% else %}
+                    <li> Thursday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Friday %}
+                    <li> Friday : {{gym.Time.Friday}} </li>
+                {% else %}
+                    <li> Friday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Saturday %}
+                    <li> Saturday : {{gym.Time.Saturday}} </li>
+                {% else %}
+                    <li> Saturday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Sunday %}
+                    <li> Sunday : {{gym.Time.Sunday}} </li>
+                {% else %}
+                    <li> Sunday : N/A </li>
+                {% endif %}
             </ul>
         </div>
     {% endif %}
     
+    <p><b> Subscribers: </b> </p>
+    {% for subs in gym.Subscribers %}
+    <div class="gym-reviews">
+        <p>{{subs}}</p>
+    </div>
+    {% else %}
+    <p>No Subscribers found</p>
+    {% endfor %}
+
+
     <h4> <b>Reviews :</b> </h4> 
     <p>Filter By:
-    <select id="reviewDropdown" name="reviewDropdown">
+    <select id="reviewUserDropdown" name="reviewUserDropdown">
         <option value="All">All</option>
         <option value="General">General</option>
         <option value="Covid-19">Covid-19</option>
