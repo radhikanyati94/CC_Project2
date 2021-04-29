@@ -257,10 +257,13 @@ def getSubscribers(gym_id):
     gym_ref = db.collection(u'Gyms').document(gym_id)
     snapshot = gym_ref.get()
     ret_list_of_subs = []
-    subscribers = document_to_dict(snapshot)['Subscribers']
-    for s in subscribers:
-        ret_list_of_subs.append(s)
-
+    data = document_to_dict(snapshot)
+    if 'Subscribers' in data:
+        subscribers = data['Subscribers']
+        for s in subscribers:
+            ret_list_of_subs.append(s)
+    else:
+        ret_list_of_subs = []
     parsed_gym_id = urllib.parse.quote(gym_id)
     parsed_url = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + parsed_gym_id
     return ret_list_of_subs, parsed_url
