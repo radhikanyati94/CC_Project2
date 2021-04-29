@@ -43,7 +43,14 @@ def extractDetails(location):
     result['PlaceId'] = placeId
     result['Reviews'] = revs
     result['Time'] = place_details['result']['opening_hours']['weekday_text']
+    t = place_details['result']['opening_hours']['weekday_text']
+    times = {}
+    for i in t:
+        s = i.split(': ')
+        times[s[0]] = s[1]
+    # print(times)    
+    result['Time'] = times
     return result
 
-# extractDetails("Mountainside Fitness Tempe/Marina Heights, 300 E Rio Salado Pkwy #102, Tempe, AZ 85281, USA")
+# print(extractDetails("Sen fitness chennai"))
 

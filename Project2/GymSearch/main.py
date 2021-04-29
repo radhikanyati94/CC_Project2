@@ -63,8 +63,17 @@ if not app.testing:
     client.setup_logging()
 global city
 
+# session['gymList'] = []
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    if 'gymList' in session:
+        session.pop('gymList', None)
+    if 'list_with_hours' in session:
+        session.pop('list_with_hours', None)
+    if 'gym_full_list' in session:
+        session.pop('gym_full_list', None)
+
     result = ""
     hideForm = True
     if request.method == 'POST':
@@ -89,7 +98,6 @@ def logout():
 
 @app.route('/list', methods=['GET', 'POST'])
 def list_on_pref():
-   
     # data = request.form.to_dict(flat=True)
     # area = "Tempe"
     # books, last_title = firestore.list_on_pref(area)
@@ -99,18 +107,57 @@ def list_on_pref():
         area = details['area']
         global city
         city = area
-        books, last_title = firestore.list_on_pref(area)
+        books, last_title, sortedList = firestore.list_on_pref(area)
+        session['gym_full_list'] = sortedList 
+        session['gymList'] = sortedList
+        session['list_with_hours'] = books
+        session['full_list_with_hours'] = books
+        print("session gymList : ", session['gymList'])
+        print("session with gyms and hours : ", session['list_with_hours'])
         return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
     else:
         books = []
         last_title = None
+        if 'list_with_hours' in session:
+            print("here inside if")
+            books = session['full_list_with_hours']
+            print(" inside else, session gymList : ", session['gymList'])
+            print("session with gyms and hours : ", session['list_with_hours'])
         return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType="All")
     # return render_template('trial_home.html')
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
 def filter_list_on_pref(filter_type):
-    books, last_title = firestore.list_gyms_on_filter(city, filter_type)
+    print("inside filter type, session gymList : ", session['gymList'])
+    print("session with gyms and hours : ", session['list_with_hours'])
+    books, last_title, sortedList = firestore.list_gyms_on_filter(city, filter_type, session['gym_full_list'])
+    session['gymList'] = sortedList
+    session['list_with_hours'] = books
+    print("after filter type, session gymList : ", session['gymList'])
+    print("session with gyms and hours : ", session['list_with_hours'])
     return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type)
+
+@app.route('/list/hours/<filter_hour>', methods=['GET', 'POST'])
+def filter_list_on_hours(filter_hour):
+    print("Here in list hours")
+    print("inside list hours, session gymList : ", session['gymList'])
+    print("session with gyms and hours : ", session['list_with_hours'])
+    books, last_title = firestore.list_gyms_on_filter_hours(city, filter_hour, session['list_with_hours'])
+    # session['gymList'] = sortedList
+    print("after list hours, session gymList : ", session['gymList'])
+    print("session with gyms and hours : ", session['list_with_hours'])
+    return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessHour=filter_hour)
+
+@app.route('/list/distance/<user_location>', methods=['GET', 'POST'])
+def sort_list_by_distance(user_location):
+    print("here in sort by distance")
+    books, last_title = firestore.gyms_sorted_by_distance(user_location, session['list_with_hours'], city)
+    return render_template('trial_home.html', gymNames=books, last_title=last_title, userLocation=user_location)
+
+@app.route('/books/<book_id>')
+def view(book_id):
+    book = firestore.read(book_id)
+    return render_template('view.html', book=book)
 
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
