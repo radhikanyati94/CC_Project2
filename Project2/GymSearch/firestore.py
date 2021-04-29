@@ -34,25 +34,6 @@ def document_to_dict(doc):
     doc_dict['id'] = doc.id
     return doc_dict
 
-
-# def next_page(limit=10, start_after=None):
-#     db = firestore.Client()
-
-#     query = db.collection(u'Book').limit(limit).order_by(u'title')
-
-#     if start_after:
-#         # Construct a new query starting at this document.
-#         query = query.start_after({u'title': start_after})
-
-#     docs = query.stream()
-#     docs = list(map(document_to_dict, docs))
-
-#     last_title = None
-#     if limit == len(docs):
-#         # Get the last document from the results and set as the last title.
-#         last_title = docs[-1][u'title']
-#     return docs, last_title
-
 def list_details():
     db = firestore.Client()
     query = db.collection(u'Gyms').stream()
@@ -61,7 +42,6 @@ def list_details():
 
     for doc in query:
         docs.append(doc.id)
-    #print(docs)
     return docs, last_title
 
 def sort_list_details():
@@ -115,28 +95,20 @@ def list_on_pref(area):
     for doc in query:
         query = db.collection(u'Gyms').document(doc.id)
         snapshot = query.get()
-        # print(document_to_dict(snapshot))
         if document_to_dict(snapshot)['Area'] == area:            
             score = document_to_dict(snapshot)['Sentiment Score']
             gymsList[doc.id] = score
-            # gymsList.append((doc.id, score))
     
     sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
-    # sortedList = gymsList.sort(key=lambda x:x[1])
-    # print(gymsList)
-    # dict_list = {}
     dict_list = []
     for l in sortedList:
         op = get_open_hours(l)
         # dict_list[l] = op
         dict_list.append((l, op))
-    # ret_dict = dict(reversed(list(dict_list.items())))
     return dict_list, last_title, sortedList
 
 def list_gyms_on_filter(area, filter_type, gyms_this_session):
     db = firestore.Client()
-    # query = db.collection(u'Gyms').stream()
-    # gymsList = {}
     gymsList = OrderedDict()
     last_title = None
     for doc in gyms_this_session:
@@ -150,25 +122,15 @@ def list_gyms_on_filter(area, filter_type, gyms_this_session):
                     gymsList[doc] = sentScore
                     break
     sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
-    print(sortedList)
-    # dict_list = {}
     dict_list = []
     for l in sortedList:
         op = get_open_hours(l)
-        # dict_list[l] = op
         dict_list.append((l, op))
-    # ret_dict = dict(reversed(list(dict_list.items())))
     return dict_list, last_title, sortedList
 
 def list_gyms_on_filter_hours(area, filter_hour, gyms_this_session):
-    # gymsList = {}
-    # gymsList = OrderedDict()
     gymsList = []
     last_title = None
-    # for g in gyms_this_session:
-    #     if gyms_this_session[g] == filter_hour:
-    #         # gymsList[g] = gyms_this_session[g]
-    #         gymsList.append()
     for g in gyms_this_session:
         if g[1] == filter_hour:
             gymsList.append((g[0], g[1]))
@@ -184,17 +146,7 @@ def gyms_sorted_by_distance(user_location, gyms_list_session, city):
         gymsList.append((g[0], g[1], my_dist))
     gymsList.sort(key = lambda x: x[2]) 
     sortedList = [(a, b) for a, b, c in gymsList]
-    print("sorted by distance :", sortedList)
     return sortedList, last_title
-
-
-def read(book_id):
-    # [START bookshelf_firestore_client]
-    db = firestore.Client()
-    book_ref = db.collection(u'Book').document(book_id)
-    snapshot = book_ref.get()
-    # [END bookshelf_firestore_client]
-    return document_to_dict(snapshot)
     
 def readGym(gym_id):
     db = firestore.Client()
@@ -208,29 +160,19 @@ def readGymUser(email):
     snapshot = user_ref.get()
     return document_to_dict(snapshot)
 
-def update(data, book_id=None):
-    db = firestore.Client()
-    book_ref = db.collection(u'Book').document(book_id)
-    book_ref.set(data)
-    return document_to_dict(book_ref.get())
-
 def updateGym(data, gym_id=None):
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gym_id)
     gym_ref.update(data)
     return document_to_dict(gym_ref.get())
 
-create = update
-
 def add_review(rev, gymName):
     #print("the review is :", rev)
     db = firestore.Client()
     gym_ref = db.collection(u'Gyms').document(gymName)
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
-
-    #Add sentiment score
     score = sentimentScore.sentiment_score(gymName)
-    print(score)
+    # print(score)
     gym_ref.update({'`Sentiment Score`': score})
 
 def add_subscriber(email, gymName):
@@ -241,7 +183,7 @@ def add_subscriber(email, gymName):
 
 def add_gym(data):
     db = firestore.Client()
-    print(type(data["name"]))
+    # print(type(data["name"]))
     gymname = data["name"]
     gym_ref = db.collection(u'Gyms').document(gymname)
     del data["name"]
@@ -269,7 +211,6 @@ def add_extracted_gym_details(doc_id):
         revs = []
         for r in reviews: 
             revs.append(r['review'])
-        # print(revs)
         summ =reviewSummarize.get_vectorized_matrix(revs)
         # print(summ)
         details["Summary"] = summ
@@ -280,13 +221,8 @@ def add_extracted_gym_details(doc_id):
         #Add sentiment score
         score = sentimentScore.sentiment_score(doc_id)
         gym_ref.set({u'Sentiment Score':score}, merge=True)
-        print("updated database")
+        # print("updated database")
         return 0
-
-def delete(id):
-    db = firestore.Client()
-    book_ref = db.collection(u'Book').document(id)
-    book_ref.delete()
 
 def getSpecificReviews(gymName,reviewType):
     db = firestore.Client()

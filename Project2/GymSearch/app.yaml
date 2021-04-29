@@ -2,6 +2,11 @@ runtime: python37
 
 instance_class: F2
 
+entrypoint: gunicorn -b :8080 -w 2 main:app
+
+resources:
+  memory_gb: 4
+
 automatic_scaling:
   min_instances: 0
   max_instances: 10

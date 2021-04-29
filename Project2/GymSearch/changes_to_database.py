@@ -97,6 +97,7 @@ def get_events():
     events = []
     tot_events = random.randint(1, 4)
     for i in range(tot_events):
+        print(i)
         event_detail = {}
         event_detail['days'] = random.choice(daysList)
         event_detail['name'] = "abc"

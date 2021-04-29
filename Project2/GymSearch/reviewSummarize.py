@@ -19,20 +19,18 @@ stopwords = set(stopwords.words('english'))
 
 from nltk.tokenize import word_tokenize
 
-def extract_reviews():
-    db = firestore.Client()
-    query = list(db.collection(u'Gyms').stream())
-    doc = query[4]
-    reviews = []
-    gym_ref = db.collection(u'Gyms').document(doc.id)
-    snapshot = gym_ref.get().to_dict()["Reviews"]
-    for s in snapshot:
-        reviews.append(s['review'])
-    return reviews 
+# def extract_reviews():
+#     db = firestore.Client()
+#     query = list(db.collection(u'Gyms').stream())
+#     doc = query[0]
+#     reviews = []
+#     gym_ref = db.collection(u'Gyms').document(doc.id)
+#     snapshot = gym_ref.get().to_dict()["Reviews"]
+#     for s in snapshot:
+#         reviews.append(s['review'])
+#     return reviews 
 
 def get_vectorized_matrix(t):
-    # print("in here")
-    print(type(t))
     stopwords.add('also')
     list_of_stopwords=['mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
     stopwords.update(list_of_stopwords)
@@ -63,21 +61,20 @@ def get_vectorized_matrix(t):
                 x = str(w)
                 stopwords.add(x)        
 
-    # print("going to vectorize")
     cv = CountVectorizer(ngram_range=(1,1), stop_words = stopwords)
     X = cv.fit_transform(t)
     Xc = (X.T * X)
     Xc.setdiag(0)
     names = cv.get_feature_names()
-    # print(names)
+
     df = pd.DataFrame(data = Xc.toarray(), columns = names, index = names)
 
     for x in range(len(df.columns)-1,-1,-1):
         if df.columns[x].isdigit():
             df.drop(df.index[x],inplace=True)
             df.drop(df.columns[[x]],axis=1,inplace=True)
-    # print("deleted integer columns")
-    Num_Of_Nodes = 15
+
+    Num_Of_Nodes = 10
     result=[]
 
     for x in range(len(df)):
@@ -92,49 +89,29 @@ def get_vectorized_matrix(t):
             df.drop(df.columns[[x]],axis=1,inplace=True)
     df.head().index
     df.columns
+
     # print(df)
     array = df.to_numpy()
     rows,col = array.shape[0],array.shape[1]
     final_list = []
-# words name / columns heading name
     words = list(df.columns)
-    for r in range(rows):
+    for r in range(rows//2):
         max_val = 0
         max_index = 0 
         for c in range(0,col): 
-        # if NaN is there, remove if not needed 
             if array[r][c]=="NaN":
                 break 
             flag = int(array[r][c])
             if flag > max_val:
                 max_val = flag 
                 max_index = c          
-    # handles case where all elements in row is 0 
         if max_val !=0:
-            # final_list.append([words[r],words[max_index]])
             final_list.append({words[r] : words[max_index]})
-    print(final_list)
-    print(len(final_list))
-    print("****")
-    keys_dict=[]
-    values_dict=[]
-    for j in final_list:
-        for k in j:
-            # print(k)
-            keys_dict.append(k)
-    for index in range(len(final_list)):
-        for key in final_list[index]:
-            values_dict.append(final_list[index][key])
-
-    for k in keys_dict:
-        if k in values_dict:
-            del final_list[values_dict.index(k)]
-    print(len(final_list))
-    print(final_list)
+            for f in final_list:
+                if words[r] in f.values():
+                    final_list=final_list[:-1]
     return final_list
 
-# r=extract_reviews()
-# get_vectorized_matrix(r)
 
 
 
