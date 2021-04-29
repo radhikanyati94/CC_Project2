@@ -112,6 +112,7 @@
         <ul class="nav navbar-nav">
           <li><a href="/list">Gyms</a></li>
         </ul>
+        <a style="float: right;" href="/logout" class="btn btn-success btn-sm">Logout</a>
       </div>
     </div>
 <div class="container">
@@ -159,11 +160,14 @@
     {% endfor %}
 
   </div>
-  <a href="javascript:;" id="add-new-event">Add Session</a>
-</br>
+  <div>
+    <a href="javascript:;" id="add-new-event" class="btn btn-success btn-sm"> <i class="glyphicon glyphicon-plus"></i>Add Session</a>
+  </div>
+  </br>
 
-  <button type="submit" class="btn btn-success">Save</button>
- 
+  <div>
+    <button type="submit" class="btn btn-success">Save</button>
+  </div>
 </form>
 
 {% endblock %}

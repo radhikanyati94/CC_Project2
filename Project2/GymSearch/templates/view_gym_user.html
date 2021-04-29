@@ -17,19 +17,18 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="media">
+    <div style="float: right;"> 
+    <a href="/gyms/{{gym_id}}/edit" class="btn btn-success btn-sm">
+        <i class="glyphicon glyphicon-edit"></i>
+        Edit Gym
+    </a>
+    <a href="/logout" class="btn btn-success btn-sm">Logout</a>
+  </div>
   {# [START gym_image] #}
   <!-- <div class="media-left">
     <img class="gym-image" src="https://placekitten.com/g/128/192">
   </div> -->
   {# [END gym_image] #}
-  <div class="media">
-    <div class="media-right">
-          <a href="/gyms/add/{{gym_id}}" class="btn btn-success btn-sm">
-            <i class="glyphicon glyphicon-plus"></i>
-            Add Review
-        </a>
-    </div>
-  </div>
 
   <div class="media-body">
     <h2 class="gym-id">
@@ -108,7 +107,6 @@
             </ul>
         </div>
     {% endif %}
-
     
     <h4> <b>Reviews :</b> </h4> 
     <p>Filter By:
