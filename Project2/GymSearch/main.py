@@ -83,6 +83,8 @@ def home():
         session.pop('list_with_hours', None)
     if 'gym_full_list' in session:
         session.pop('gym_full_list', None)
+    if 'typeCityMessage' in session:
+        session.pop('typeCityMessage', None)
 
     result = ""
     hideForm = True

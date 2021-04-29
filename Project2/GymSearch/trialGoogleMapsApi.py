@@ -164,4 +164,3 @@ s = "Spot Fitness and Spa"
 news = urllib.parse.quote(s)
 u = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + news
 print(u)
-
