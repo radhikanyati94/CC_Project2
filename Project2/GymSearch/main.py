@@ -190,19 +190,41 @@ def view(book_id):
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+        
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message="")
 
 @app.route('/gyms/<gym_id>/view')
 def viewForGymUser(gym_id):
     gym = firestore.readGym(gym_id)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/subscribe')
+def subscribe(gym_id):
+    print(request.args.get('email'))
+    print(gym_id)
+    gym = firestore.add_subscriber(request.args.get('email'), gym_id)
+    
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message = "Subscribed Successfully!")
 
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
     gym = firestore.readGym(gym_id)
     gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type, message="")
 
+@app.route('/gyms/user/<gym_id>/<review_type>')
+def filterGymUser(gym_id, review_type):
+    gym = firestore.readGym(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
+    if "https://" not in gym["website"] and "http://" not in gym["website"]:
+        gym["website"] = "https://" + gym["website"]
+    return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
 def addReview(gym_id):
@@ -295,7 +317,14 @@ def editGym(gym_id):
             else:
                 break 
         data["events"] = events
-        data["Area"] = "Seattle"
+        data["Time"] = {"Monday" : data["Monday"], "Tuesday" : data["Tuesday"], "Wednesday" : data["Wednesday"], "Thursday" : data["Thursday"], "Friday" : data["Friday"], "Saturday" : data["Saturday"], "Sunday" : data["Sunday"]}
+        del data["Monday"]
+        del data["Tuesday"]
+        del data["Wednesday"]
+        del data["Thursday"]
+        del data["Friday"]
+        del data["Saturday"]
+        del data["Sunday"]
         gym = firestore.updateGym(data, gym_id)
         status = send_emails(gym_id)
         print(status)
