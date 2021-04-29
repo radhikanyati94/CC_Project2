@@ -57,6 +57,9 @@
         </select>
     </p>
 </div> -->
+{% if message %}
+    <span style="color:red">{{message}}</span>
+{% endif %}
 <div>
 
   <div class="filters" id="filters" align="right">
@@ -82,6 +85,26 @@
         </select>
     </p>
 
+    <p>Sort by:
+        <select id="recommendedOrDistance" name="recommendedOrDistance">
+            <option value="Recommended">Recommended</option>
+            <option value="Distance">Distance</option>
+        </select>
+    </p>
+
+    <div class="address" id="address" align="right">
+        <div class="subscribe-right">
+            <script>
+                function buttonclicked(){
+                console.log("here")
+                var val = document.getElementById("address").value;
+                console.log(val)
+                window.location.href = window.location.origin + "/list/distance/" + val;
+            }
+            </script>
+        </div>
+    </div>
+<!-- 
     <div class="address" id="address" align="right">
         <div class="subscribe-right">
             <button onclick="createFunction()" class="btn btn-success btn-sm">
@@ -136,7 +159,8 @@
             </script>
         </div>
     </div>
-  </div>
+  </div> -->
+
 
   <div class="listOfGyms" id="listOfGyms" align="left">
     <h3>Top Recommended Gyms</h3>

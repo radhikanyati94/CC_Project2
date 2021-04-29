@@ -54,6 +54,55 @@
                 } 
             });
 
+            $("#recommendedOrDistance").val('{{sortBy}}');
+            $("#recommendedOrDistance").change(function () {
+                var val = $("#recommendedOrDistance").val();
+                var parser = new DOMParser;
+                //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
+                if(val === 'Recommended'){
+                    window.location.href = window.location.origin + "/list";
+                } else {
+                    createFunction()
+                    // window.location.href = window.location.origin + "/list/hours/"  + val;
+                } 
+            });
+
+            function createFunction() {
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "text");
+                    x.setAttribute("name", "address")
+                    x.setAttribute("id", "address")
+                    x.setAttribute("value", "");
+
+                    // var y = document.createElement("button");
+                    // y.setAttribute("type", "submit");
+                    // y.setAttribute("id", "distanceButton");
+                    // y.setAttribute("value", "Submit");
+                    // // y.setAttribute("background-color","#green")
+                    // // y.setAttribute("onclick", "clickedButton")
+
+                    let template = `
+                    <button id="distanceButton" type="submit" class="btn btn-success btn-sm" onclick="buttonclicked()">Submit</button>`;
+
+                    let div = document.createElement('div');
+                    div.innerHTML = template;
+                    
+                    
+                    console.log("done")
+                    document.getElementById('address').append("Enter your address: ");
+                    document.getElementById('address').appendChild(x);
+                    // document.getElementById('address').appendChild(y);
+                    $('#address').append(div);
+                }
+
+            // $("#distanceButton").click(function(){
+            //     console.log("here")
+            //     var val = document.getElementById("address").value;
+            //     console.log(val)
+            //     window.location.href = window.location.origin + "/list/distance/" + val;
+            // });
+
+            
             // $("#address").val('{{userLocation}}');
             
 
