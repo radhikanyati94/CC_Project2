@@ -72,15 +72,14 @@ def home():
         result, gymName = firestore.gymLogin(details["email"], details["password"])
         hideForm = False
         if result == "Success":
-            
             #session['user'] = 'gym'
-            return redirect(url_for('.editGym', gym_id=gymName))
+            return redirect(url_for('.viewForGymUser', gym_id=gymName))
     return render_template('home.html', message=result, hideForm=hideForm)
 
 @app.route('/logout')
 def logout():
     #session.pop('user', None)
-    return redirect(url_for('.home', message="", hideForm=True))
+    return redirect(url_for('.home'))
 
 # @app.route('/list')
 # def list():
@@ -113,16 +112,15 @@ def filter_list_on_pref(filter_type):
     books, last_title = firestore.list_gyms_on_filter(city, filter_type)
     return render_template('trial_home.html', gymNames=books, last_title=last_title, fitnessType=filter_type)
 
-
-@app.route('/books/<book_id>')
-def view(book_id):
-    book = firestore.read(book_id)
-    return render_template('view.html', book=book)
-
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+@app.route('/gyms/<gym_id>/view')
+def viewForGymUser(gym_id):
+    gym = firestore.readGym(gym_id)
+    return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType="All")
 
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
@@ -132,7 +130,7 @@ def filterGym(gym_id, review_type):
 
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
-def add(gym_id):
+def addReview(gym_id):
     if request.method == 'POST':
         #print(request.form)
         data = request.form.to_dict(flat=True)
@@ -142,7 +140,7 @@ def add(gym_id):
 
         return redirect(url_for('.viewGym', gym_id=gym_id))
 
-    return render_template('form_gyms.html', action='Add', gyms={}, gymName=gym_id)
+    return render_template('add_review.html', action='Add', gyms={}, gymName=gym_id)
 
 @app.route('/gyms/add', methods=['GET', 'POST'])
 def addGym():
@@ -194,7 +192,7 @@ def addGym():
             if flag==1:
                 message = "Could not find gym!!"
                 return render_template('add_gym.html', action='Add', gym={}, message=message)
-            return redirect(url_for('.editGym', gym_id=gymName))
+            return redirect(url_for('.viewForGymUser', gym_id=gymName))
         else:
             message = "User Already Exists. Please Try to Login."
 
@@ -205,8 +203,26 @@ def editGym(gym_id):
     gym = firestore.readGym(gym_id)
     if request.method == 'POST':
         data = request.form.to_dict(flat=True)
+        i = 1
+        events = []
+        while(True):
+            key = "event" + str(i) + "type"
+            if key in data:
+                dict = {}
+                dict = {"type" : data[key], "name" : data["event" + str(i) + "name"], "time" : data["event" + str(i) + "time"], "days" : data["event" + str(i) + "days"], "occupancy" : data["event"+ str(i) + "occupancy"]}
+                events.append(dict)
+                del data[key]
+                del data["event" + str(i) + "name"]
+                del data["event" + str(i) + "time"]
+                del data["event" + str(i) + "days"]
+                del data["event" + str(i) + "occupancy"]
+                i += 1
+            else:
+                break 
+        data["events"] = events
+        data["Area"] = "Seattle"
         gym = firestore.updateGym(data, gym_id)
-        return redirect(url_for('.view', gym=gym, gym_id=gym_id, reviewType="All")) 
+        return redirect(url_for('.viewForGymUser', gym_id=gym_id)) 
 
     return render_template('edit_gym.html', gym=gym, gym_id=gym_id, eventNum=len(gym["events"])+1)
 
