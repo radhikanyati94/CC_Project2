@@ -23,6 +23,7 @@ from collections import OrderedDict
 import requests
 import json
 import reviewSummarize
+import urllib.parse
 # [END bookshelf_firestore_client_import]
 
 
@@ -307,3 +308,18 @@ def gymLogin(email, password):
         else:
             return "Incorrect Password", gymName
     return "User Not Found!!", gymName
+
+
+def getSubscribers(gym_id):
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(gym_id)
+    snapshot = gym_ref.get()
+    ret_list_of_subs = []
+    subscribers = document_to_dict(snapshot)['Subscribers']
+    for s in subscribers:
+        ret_list_of_subs.append(s)
+
+    parsed_gym_id = urllib.parse.quote(gym_id)
+    parsed_url = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + parsed_gym_id
+    return ret_list_of_subs, parsed_url
+    
