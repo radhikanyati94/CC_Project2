@@ -165,11 +165,6 @@ def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
 
-@app.route('/gyms/<gym_id>/edit')
-def editGym(gym_id):
-    gym = firestore.readGym(gym_id)
-    return render_template('edit_gym.html', gym=gym, gym_id=gym_id, reviewType="All")
-
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
     gym = firestore.readGym(gym_id)
@@ -244,8 +239,17 @@ def addGym():
         else:
             message = "User Already Exists. Please Try to Login."
 
-    return render_template('add_gym.html', action='Add', gym={}, message=message)
+    return render_template('add_gym.html', action='Add', gym={}, message=message, eventNum=2)
 
+@app.route('/gyms/<gym_id>/edit', methods=['GET', 'POST'])
+def editGym(gym_id):
+    gym = firestore.readGym(gym_id)
+    if request.method == 'POST':
+        data = request.form.to_dict(flat=True)
+        gym = firestore.updateGym(data, gym_id)
+        return redirect(url_for('.view', gym=gym, gym_id=gym_id, reviewType="All")) 
+
+    return render_template('edit_gym.html', gym=gym, gym_id=gym_id, eventNum=len(gym["events"])+1)
 
 @app.route('/books/<book_id>/edit', methods=['GET', 'POST'])
 def edit(book_id):
@@ -265,6 +269,7 @@ def edit(book_id):
         return redirect(url_for('.view', book_id=book['id']))
 
     return render_template('form.html', action='Edit', book=book)
+
 
 
 @app.route('/books/<book_id>/delete')

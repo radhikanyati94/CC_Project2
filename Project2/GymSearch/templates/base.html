@@ -74,7 +74,8 @@
             });
 
             if(window.location.href.includes("add")){
-                let i = 2;
+                let i = parseInt('{{eventNum}}');
+                console.log(i);
                 document.getElementById('add-new-event').onclick = function () {
                     let template = `
                     Type: 
