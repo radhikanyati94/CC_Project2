@@ -110,7 +110,7 @@
           <div class="navbar-brand"><a href="/">HomePage</a></div>
         </div>
         <ul class="nav navbar-nav">
-          <li><a href="/list">Gyms</a></li>
+          <li><a href="/list">Search Gyms</a></li>
         </ul>
         <a style="float: right;" href="/logout" class="btn btn-success btn-sm">Logout</a>
       </div>
@@ -132,6 +132,17 @@
     <textarea type="text" name="covidGuidelines" id="covidGuidelines" class="form-control">{{gym.covidGuidelines}}</textarea>
   </div>
 
+  <div class="openingHours">
+        <p> <b>Opening Hours</b></p>
+        Monday : <input type="text" value="{{gym.Time.Monday}}" /> </li>
+        Tuesday : <input type="text" value="{{gym.Time.Tuesday}}" /> </li>
+        Wednesday : <input type="text" value="{{gym.Time.Wednesday}}" /> </li>
+        Thursday : <input type="text" value="{{gym.Time.Thursday}}" /> </li>
+        Friday : <input type="text" value="{{gym.Time.Friday}}" /> </li>
+        Saturday : <input type="text" value="{{gym.Time.Saturday}}"  /> </li>
+        Sunday : <input type="text" value="{{gym.Time.Sunday}}"  /> </li> 
+    </div>
+    
   <label for="events">Fitness Sessions</label>
    
   <div id="events">

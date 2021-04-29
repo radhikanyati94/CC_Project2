@@ -57,9 +57,9 @@
             // $("#address").val('{{userLocation}}');
             
 
-            $("#reviewDropdown").val('{{reviewType}}');
-            $("#reviewDropdown").change(function () {
-                var val = $("#reviewDropdown").val();
+            $("#reviewUserDropdown").val('{{reviewType}}');
+            $("#reviewUserDropdown").change(function () {
+                var val = $("#reviewUserDropdown").val();
                 var parser = new DOMParser;
                 var dom = parser.parseFromString(
                     '<!doctype html><body>' + '{{gym_id}}',
@@ -67,11 +67,12 @@
                 var decoded = dom.body.textContent;
                 //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
                 if(val === 'All'){
-                    window.location.href = window.location.origin + "/gyms/" + decoded;
+                    window.location.href = window.location.origin + "/gyms/" + decoded + "/view";
                 } else {
-                    window.location.href = window.location.origin + "/gyms/" + decoded + "/" +val;
+                    window.location.href = window.location.origin + "/gyms/user/" + decoded + "/" +val;
                 } 
             });
+            
 
             if(window.location.href.includes("add")){
                 let i = parseInt('{{eventNum}}');
@@ -164,7 +165,7 @@
           <div class="navbar-brand"><a href="/">HomePage</a></div>
         </div>
         <ul class="nav navbar-nav">
-          <li><a href="/list">Gyms</a></li>
+          <li><a href="/list">Search Gyms</a></li>
         </ul>
       </div>
     </div>

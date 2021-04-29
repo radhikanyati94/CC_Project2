@@ -22,13 +22,77 @@
     <img class="gym-image" src="https://placekitten.com/g/128/192">
   </div> -->
   {# [END gym_image] #}
-  <div class="media">
+  <!-- <div class="media">
     <div class="media-right">
           <a href="/gyms/add/{{gym_id}}" class="btn btn-success btn-sm">
             <i class="glyphicon glyphicon-plus"></i>
             Add Review
         </a>
     </div>
+  </div> -->
+
+<div class="subscribe" id="subscribe" align="right">
+    <div class="subscribe-right">
+        <a href="/gyms/add/{{gym_id}}" class="btn btn-success btn-sm">
+            <i class="glyphicon glyphicon-plus"></i>
+            Add Review
+        </a> 
+          <button onclick="createFunction()" class="btn btn-success btn-sm">
+            Subscribe
+          </button>
+
+
+          <script>
+               $(document).ready( function() {
+                    $("#reviewDropdown").val('{{reviewType}}');
+                    $("#reviewDropdown").change(function () {
+                        var val = $("#reviewDropdown").val();
+                        var parser = new DOMParser;
+                        var dom = parser.parseFromString(
+                            '<!doctype html><body>' + '{{gym_id}}',
+                            'text/html');
+                        var decoded = dom.body.textContent;
+                        //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
+                        if(val === 'All'){
+                            window.location.href = window.location.origin + "/gyms/" + decoded;
+                        } else {
+                            window.location.href = window.location.origin + "/gyms/" + decoded + "/" +val;
+                        } 
+                    });
+                });
+            function createFunction() {
+
+                var x = document.createElement("INPUT");
+                x.setAttribute("type", "text");
+                x.setAttribute("name", "mail-id")
+                x.setAttribute("id", "subscriberEmail")
+        
+                let template = `<button id="addSubscriber" type="submit" class="btn btn-success btn-sm" onclick="buttonclicked()">Submit</button>`;
+                let div = document.createElement('div');
+                div.innerHTML = template;
+                
+                document.getElementById('subscribe').append("Enter your email address: ");
+                document.getElementById('subscribe').appendChild(x);
+                $('#subscribe').append(div);
+            }
+
+            function buttonclicked(){
+                console.log("here")
+                var val = document.getElementById("subscriberEmail").value;
+                console.log(val)
+                var parser = new DOMParser;
+                var dom = parser.parseFromString(
+                    '<!doctype html><body>' + '{{gym_id}}',
+                    'text/html');
+                var decoded = dom.body.textContent;
+                window.location.href = window.location.origin + "/gyms/" + decoded + "/subscribe?email=" + val;
+            }
+
+          </script>
+    </div>
+    {% if message %}
+        <span style="color:green">{{message}}</span>
+    {% endif %}
   </div>
 
   <div class="media-body">
@@ -56,8 +120,10 @@
         <p> <b>Total Reviews : </b> {{gym.reviews_count}} </p>
     {% endif %} -->
 
-    {% if gym.website %}
-        <p> <b>Website : </b> {{gym.website}} </p>
+    {% if gym.website and gym.website != "NA" %}
+        <p> <b>Website : </b> <a href='{{gym.website}}'>{{gym.website}}</a> </p>
+    {% else %}
+        <p> <b>Website : </b> N/A</p>
     {% endif %}
 
     {% if gym.occupancy %}
@@ -98,13 +164,47 @@
         <div class="openingHours">
             <p> <b>Opening Hours</b></p>
             <ul>
-                <li> Monday : {{gym.Time.Monday}} </li>
-                <li> Tuesday : {{gym.Time.Tuesday}} </li>
-                <li> Wednesday : {{gym.Time.Wednesday}} </li>
-                <li> Thursday : {{gym.Time.Thursday}} </li>
-                <li> Friday : {{gym.Time.Friday}} </li>
-                <li> Saturday : {{gym.Time.Saturday}} </li>
-                <li> Sunday : {{gym.Time.Sunday}} </li>
+                {% if gym.Time.Monday %}
+                    <li> Monday : {{gym.Time.Monday}} </li>
+                {% else %}
+                    <li> Monday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Tuesday %}
+                    <li> Tuesday : {{gym.Time.Tuesday}} </li>
+                {% else %}
+                    <li> Tuesday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Wednesday %}
+                    <li> Wednesday : {{gym.Time.Wednesday}} </li>
+                {% else %}
+                    <li> Wednesday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Thursday %}
+                    <li> Thursday : {{gym.Time.Thursday}} </li>
+                {% else %}
+                    <li> Thursday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Friday %}
+                    <li> Friday : {{gym.Time.Friday}} </li>
+                {% else %}
+                    <li> Friday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Saturday %}
+                    <li> Saturday : {{gym.Time.Saturday}} </li>
+                {% else %}
+                    <li> Saturday : N/A </li>
+                {% endif %}
+
+                {% if gym.Time.Sunday %}
+                    <li> Sunday : {{gym.Time.Sunday}} </li>
+                {% else %}
+                    <li> Sunday : N/A </li>
+                {% endif %}
             </ul>
         </div>
     {% endif %}

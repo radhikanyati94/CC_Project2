@@ -232,6 +232,12 @@ def add_review(rev, gymName):
     print(score)
     gym_ref.update({'`Sentiment Score`': score})
 
+def add_subscriber(email, gymName):
+    db = firestore.Client()
+    gym_ref = db.collection(u'Gyms').document(gymName)
+    gym_ref.update({u'Subscribers': firestore.ArrayUnion([email])})
+    return document_to_dict(gym_ref.get())
+
 def add_gym(data):
     db = firestore.Client()
     print(type(data["name"]))
