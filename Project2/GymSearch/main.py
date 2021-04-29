@@ -315,7 +315,14 @@ def editGym(gym_id):
             else:
                 break 
         data["events"] = events
-        data["Area"] = "Seattle"
+        data["Time"] = {"Monday" : data["Monday"], "Tuesday" : data["Tuesday"], "Wednesday" : data["Wednesday"], "Thursday" : data["Thursday"], "Friday" : data["Friday"], "Saturday" : data["Saturday"], "Sunday" : data["Sunday"]}
+        del data["Monday"]
+        del data["Tuesday"]
+        del data["Wednesday"]
+        del data["Thursday"]
+        del data["Friday"]
+        del data["Saturday"]
+        del data["Sunday"]
         gym = firestore.updateGym(data, gym_id)
         status = send_emails(gym_id)
         print(status)
