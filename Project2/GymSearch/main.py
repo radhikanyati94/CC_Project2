@@ -208,7 +208,8 @@ def addGym():
         data = request.form.to_dict()
         gymName = data["name"]
         user = firestore.readGymUser(data["email"])
-        if(user == None):
+        gym = firestore.readGym(gymName)
+        if(user == None and gym == None):
             i = 1
             events = []
             userDict = {}
@@ -250,8 +251,10 @@ def addGym():
                 message = "Could not find gym!!"
                 return render_template('add_gym.html', action='Add', gym={}, message=message)
             return redirect(url_for('.viewForGymUser', gym_id=gymName))
+        elif gym == None:
+            message = "User Already Exists! Please Try to Login."
         else:
-            message = "User Already Exists. Please Try to Login."
+            message = "Gym is already registered with other email address!"
 
     return render_template('add_gym.html', action='Add', gym={}, message=message, eventNum=2)
 
