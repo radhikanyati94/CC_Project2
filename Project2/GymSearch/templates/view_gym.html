@@ -101,10 +101,7 @@
     </h2>
     {% if gym.location %}
         <p> <b>Address : </b> {{gym.location}} </p>
-                <!-- <div class=summar_of_reviews>
-</br>
-<b> Summary: </b> {{gym.Summary}}</b>
-</div> -->
+ 
     {% endif %}
 
 
@@ -211,6 +208,24 @@
 
     
     <h4> <b>Reviews :</b> </h4> 
+        <p><b>Summary</b></p>
+    {% for s in gym.Summary %}
+    <!-- <div class=summary_of_reviews>
+            </br> -->
+        {% if gym.Summary %}
+        <!-- <div></div> -->
+        {% endif %}
+       {% for k in s %} 
+       <div class="boxed">
+             <b>{{k}}, {{s[k]}}</b> &emsp; &emsp;
+        </div>
+        {% endfor %}
+        {% else %}
+        <b>Summary cannot be found</b>
+        <!-- <div></div> -->
+            <!-- </div> -->
+    {% endfor %}
+
     <p>Filter By:
     <select id="reviewDropdown" name="reviewDropdown">
         <option value="All">All</option>
@@ -220,23 +235,7 @@
         <option value="Management">Management</option>
     </select>
     </p>
-    <p><b>Co occuring words-Summary</b></p>
-    {% for s in gym.Summary %}
-    <div class=summary_of_reviews>
-            </br>
-        {% if gym.Summary %}
-        <!-- <div></div> -->
-        {% endif %}
-       {% for k in s %} 
-       <div class="boxed">
-             <b>{{k}}, {{s[k]}}</b>
-        </div>
-        {% endfor %}
-        {% else %}
-        <b>Summary cannot be found</b>
-        <!-- <div></div> -->
-            </div>
-    {% endfor %}
+    
 
     {% for review in gym.Reviews %}
     <div class="gym-reviews">

@@ -3,6 +3,7 @@ from google.cloud import firestore
 import json
 import csv
 import pandas as pd
+import collections
 import numpy as np
 import warnings
 from sklearn.feature_extraction.text import CountVectorizer
@@ -30,6 +31,27 @@ from nltk.tokenize import word_tokenize
 #         reviews.append(s['review'])
 #     return reviews 
 
+def wordscount(t):
+    stopwords.add('also')
+    list_of_stopwords=['mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
+    stopwords.update(list_of_stopwords)
+    tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
+    lst=[]
+    for txt in t:
+        is_noun = lambda pos: pos[:2] in tags
+        tokenized = nltk.word_tokenize(txt)
+        nouns = [word for (word,pos) in nltk.pos_tag(tokenized) if is_noun(pos)]
+        example_words = nouns
+        stop_words1=set(stopwords)
+        for im in example_words:
+            i_split = im.split()
+            for jm in i_split:
+                if jm not in stop_words1:
+                    lst.append(jm)
+    counts = collections.Counter(lst).most_common(5)
+    return counts
+    # print(counts)
+
 def get_vectorized_matrix(t):
     stopwords.add('also')
     list_of_stopwords=['mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
@@ -49,7 +71,7 @@ def get_vectorized_matrix(t):
     #                 lst.append(jm)
     #   individual word frequency
     # counts = collections.Counter(lst).most_common(5)
-    # print(counts)
+    # # print(counts)
 
     for txt in t:
         is_noun = lambda pos: pos[:2] in tags
