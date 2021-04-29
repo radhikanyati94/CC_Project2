@@ -155,6 +155,25 @@
 
 
     <h4> <b>Reviews :</b> </h4> 
+
+    <p><b>Summary</b></p>
+    {% for s in gym.Summary %}
+    <!-- <div class=summary_of_reviews>
+            </br> -->
+        {% if gym.Summary %}
+        <!-- <div></div> -->
+        {% endif %}
+       {% for k in s %} 
+       <div class="boxed">
+             <b>{{k}}, {{s[k]}}</b> &emsp; &emsp;
+        </div>
+        {% endfor %}
+        {% else %}
+        <b>Summary cannot be found</b>
+        <!-- <div></div> -->
+            <!-- </div> -->
+    {% endfor %}
+
     <p>Filter By:
     <select id="reviewUserDropdown" name="reviewUserDropdown">
         <option value="All">All</option>
