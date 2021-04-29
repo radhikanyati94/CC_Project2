@@ -42,6 +42,21 @@
                 } 
             });
 
+            $("#fitnessOpenOrClosed").val('{{fitnessHour}}');
+            $("#fitnessOpenOrClosed").change(function () {
+                var val = $("#fitnessOpenOrClosed").val();
+                var parser = new DOMParser;
+                //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
+                if(val === 'All'){
+                    window.location.href = window.location.origin + "/list";
+                } else {
+                    window.location.href = window.location.origin + "/list/hours/"  + val;
+                } 
+            });
+
+            // $("#address").val('{{userLocation}}');
+            
+
             $("#reviewDropdown").val('{{reviewType}}');
             $("#reviewDropdown").change(function () {
                 var val = $("#reviewDropdown").val();

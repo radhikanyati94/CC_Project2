@@ -34,31 +34,119 @@
     <button type="submit" class="btn btn-success">Search</button>
 </form>
 
+<!-- <div>
+    <p>Filter By Fitness Sessions:
+        <select id="fitnessSessionDrops" name="fitnessSessionDrops">
+            <option value="All">All</option>
+            <option value="Yoga">Yoga</option>
+            <option value="HIIT">HIIT</option>
+            <option value="Zumba">Zumba</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Kickboxing">Kickboxing</option>
+            <option value="Full Body Fusion">Full Body Fusion</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Personal Training">Personal Training</option>
+        </select>
+    </p>
 
-<p>Filter By Fitness Sessions:
-<select id="fitnessSessionDrops" name="fitnessSessionDrops">
-    <option value="All">All</option>
-    <option value="Yoga">Yoga</option>
-    <option value="HIIT">HIIT</option>
-    <option value="Zumba">Zumba</option>
-    <option value="Pilates">Pilates</option>
-    <option value="Kickboxing">Kickboxing</option>
-    <option value="Full Body Fusion">Full Body Fusion</option>
-    <option value="Cycling">Cycling</option>
-    <option value="Personal Training">Personal Training</option>
-</select>
-</p>
+    <p>Filter by Opening hours:
+        <select id="fitnessOpenOrClosed" name="fitnessOpenOrClosed">
+            <option value="All">All</option>
+            <option value="Open">Open Now</option>
+            <option value="Closed">Closed</option>
+        </select>
+    </p>
+</div> -->
+<div>
 
-<h3>Top Recommended Gyms</h3>
-<!-- <a href="/books/add" class="btn btn-success btn-sm">
-  <i class="glyphicon glyphicon-plus"></i>
-  Add book
-</a> -->
+  <div class="filters" id="filters" align="right">
+    <p>Filter By Fitness Sessions:
+        <select id="fitnessSessionDrops" name="fitnessSessionDrops">
+            <option value="All">All</option>
+            <option value="Yoga">Yoga</option>
+            <option value="HIIT">HIIT</option>
+            <option value="Zumba">Zumba</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Kickboxing">Kickboxing</option>
+            <option value="Full Body Fusion">Full Body Fusion</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Personal Training">Personal Training</option>
+        </select>
+    </p>
+
+    <p>Filter by Opening hours:
+        <select id="fitnessOpenOrClosed" name="fitnessOpenOrClosed">
+            <option value="All">All</option>
+            <option value="Open">Open Now</option>
+            <option value="Closed">Closed</option>
+        </select>
+    </p>
+
+    <div class="address" id="address" align="right">
+        <div class="subscribe-right">
+            <button onclick="createFunction()" class="btn btn-success btn-sm">
+                Sort by Distance
+            </button>
+
+            <script language="javascript">
+                function createFunction() {
+
+
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "text");
+                    x.setAttribute("name", "address")
+                    x.setAttribute("id", "address")
+                    x.setAttribute("value", "");
+
+                    // var y = document.createElement("button");
+                    // y.setAttribute("type", "submit");
+                    // y.setAttribute("id", "distanceButton");
+                    // y.setAttribute("value", "Submit");
+                    // // y.setAttribute("background-color","#green")
+                    // // y.setAttribute("onclick", "clickedButton")
+
+                    let template = `
+                    <button id="distanceButton" type="submit" class="btn btn-success btn-sm" onclick="buttonclicked()">Submit</button>`;
+
+                    let div = document.createElement('div');
+                    div.innerHTML = template;
+                    
+                    
+                    console.log("done")
+                    document.getElementById('address').append("Enter your address: ");
+                    document.getElementById('address').appendChild(x);
+                    // document.getElementById('address').appendChild(y);
+                    $('#address').append(div);
+                }
+
+            // $("#distanceButton").click(function(){
+            //     console.log("here")
+            //     var val = document.getElementById("address").value;
+            //     console.log(val)
+            //     window.location.href = window.location.origin + "/list/distance/" + val;
+            // });
+
+            function buttonclicked(){
+                console.log("here")
+                var val = document.getElementById("address").value;
+                console.log(val)
+                window.location.href = window.location.origin + "/list/distance/" + val;
+            }
+
+            </script>
+        </div>
+    </div>
+  </div>
+
+  <div class="listOfGyms" id="listOfGyms" align="left">
+    <h3>Top Recommended Gyms</h3>
+
 
 {% for gName in gymNames %}
 <div class="media">
-  <h4><a href="/gyms/{{gName}}"> <!-- <div class="media-body"> -->{{gName}}<!-- </div> --></a> 
-  <span style="padding-left: 15px; color:red"> {{gymNames[gName]}}</span></h4>
+  <h4><a href="/gyms/{{gName[0]}}"> <!-- <div class="media-body"> -->{{gName[0]}}<!-- </div> --></a> 
+  <!-- <span style="padding-left: 15px; color:red"> {{gymNames[gName]}}</span></h4> -->
+  <span style="padding-left: 15px; color:red"> {{gName[1]}}</span></h4>
 </div>
 {% else %}
 <p>No gyms found</p>
@@ -74,3 +162,7 @@
 
 
 {% endblock %}
+  </div>
+
+    
+</div>

@@ -47,23 +47,23 @@ def document_to_dict(doc):
     doc_dict['id'] = doc.id
     return doc_dict
 
-fitnessType = "Kickboxing"
-area = "Tempe"
-db = firestore.Client()
-query = db.collection(u'Gyms').stream()
-gyms = {}
-for doc in query:
-    gym_ref = db.collection(u'Gyms').document(doc.id)
-    snapshot = gym_ref.get()
-    if document_to_dict(snapshot)['Area'] == area:
-        events = document_to_dict(snapshot)['events']
-        for e in events:
-            if e['type'] == fitnessType:
-                sentScore = document_to_dict(snapshot)['Sentiment Score']
-                gyms[doc.id] = sentScore
-                break
-sortedList = sorted(gyms, key=gyms.get, reverse=True)
-print(sortedList)
+# fitnessType = "Kickboxing"
+# area = "Tempe"
+# db = firestore.Client()
+# query = db.collection(u'Gyms').stream()
+# gyms = {}
+# for doc in query:
+#     gym_ref = db.collection(u'Gyms').document(doc.id)
+#     snapshot = gym_ref.get()
+#     if document_to_dict(snapshot)['Area'] == area:
+#         events = document_to_dict(snapshot)['events']
+#         for e in events:
+#             if e['type'] == fitnessType:
+#                 sentScore = document_to_dict(snapshot)['Sentiment Score']
+#                 gyms[doc.id] = sentScore
+#                 break
+# sortedList = sorted(gyms, key=gyms.get, reverse=True)
+# print(sortedList)
 
 # fitnessTypes = ["Yoga", "HIIT", "Zumba", "Pilates", "Kickboxing", "Full Body Fusion", "Cycling", "Personal Training"]
 # daysList = ["Mon,Wed", "tue", "thurs, fri", "mon", "tue,fri", "wed, fri", "mon,wed,fri", "tue,thur,sat"]
@@ -129,3 +129,23 @@ print(sortedList)
 
 
 
+gmaps = googlemaps.Client(key='AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok')
+db = firestore.Client()
+query = db.collection(u'Gyms').stream()
+# gyms={}
+gyms = []
+for doc in query:
+    query = db.collection(u'Gyms').document(doc.id)
+    snapshot = query.get()
+    if document_to_dict(snapshot)['Area'] == "Tempe":
+        loc = doc.id + ' ' + document_to_dict(snapshot)['Area']
+        my_dist = gmaps.distance_matrix('1019 E University Dr, Tempe',loc)['rows'][0]['elements'][0]['distance']['value']
+        # gyms[doc.id] = my_dist
+        gyms.append((doc.id, "open", my_dist))
+
+# Printing the result
+# sortedList = sorted(gyms, key=gyms.get)
+gyms.sort(key = lambda x: x[2]) 
+print(gyms)
+sortedList = [(a, b) for a, b, c in gyms]
+print(sortedList)

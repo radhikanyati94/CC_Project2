@@ -19,6 +19,7 @@ import AddReviewType
 import ExtractGymDetails
 import googlemaps
 from datetime import datetime
+from collections import OrderedDict
 import requests
 import json
 # [END bookshelf_firestore_client_import]
@@ -93,18 +94,20 @@ def get_open_hours(doc_id):
     res = requests.get(endpoint_url, params = params)
     place_details =  json.loads(res.content)
     if len(place_details['result']) == 0:
-        return "Open Now!"
+        return "Open"
     else:
         op = place_details['result']['opening_hours']['open_now']
         if op:
-            return "Open Now!"
+            return "Open"
         else:
             return "Closed"
 
 def list_on_pref(area):
     db = firestore.Client()
     query = db.collection(u'Gyms').stream()
-    gymsList = {}
+    # gymsList = {}
+    gymsList = OrderedDict()
+    # gymsList = []
     last_title = None
 
     for doc in query:
@@ -114,37 +117,73 @@ def list_on_pref(area):
         if document_to_dict(snapshot)['Area'] == area:            
             score = document_to_dict(snapshot)['Sentiment Score']
             gymsList[doc.id] = score
+            # gymsList.append((doc.id, score))
     
     sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
+    # sortedList = gymsList.sort(key=lambda x:x[1])
     # print(gymsList)
-    dict_list = {}
+    # dict_list = {}
+    dict_list = []
     for l in sortedList:
         op = get_open_hours(l)
-        dict_list[l] = op
-    return dict_list, last_title
+        # dict_list[l] = op
+        dict_list.append((l, op))
+    # ret_dict = dict(reversed(list(dict_list.items())))
+    return dict_list, last_title, sortedList
 
-def list_gyms_on_filter(area, filter_type):
+def list_gyms_on_filter(area, filter_type, gyms_this_session):
     db = firestore.Client()
-    query = db.collection(u'Gyms').stream()
-    gymsList = {}
+    # query = db.collection(u'Gyms').stream()
+    # gymsList = {}
+    gymsList = OrderedDict()
     last_title = None
-    for doc in query:
-        gym_ref = db.collection(u'Gyms').document(doc.id)
+    for doc in gyms_this_session:
+        gym_ref = db.collection(u'Gyms').document(doc)
         snapshot = gym_ref.get()
         if document_to_dict(snapshot)['Area'] == area:
             events = document_to_dict(snapshot)['events']
             for e in events:
                 if e['type'] == filter_type:
                     sentScore = document_to_dict(snapshot)['Sentiment Score']
-                    gymsList[doc.id] = sentScore
+                    gymsList[doc] = sentScore
                     break
     sortedList = sorted(gymsList, key=gymsList.get, reverse=True)
     print(sortedList)
-    dict_list = {}
+    # dict_list = {}
+    dict_list = []
     for l in sortedList:
         op = get_open_hours(l)
-        dict_list[l] = op
-    return dict_list, last_title
+        # dict_list[l] = op
+        dict_list.append((l, op))
+    # ret_dict = dict(reversed(list(dict_list.items())))
+    return dict_list, last_title, sortedList
+
+def list_gyms_on_filter_hours(area, filter_hour, gyms_this_session):
+    # gymsList = {}
+    # gymsList = OrderedDict()
+    gymsList = []
+    last_title = None
+    # for g in gyms_this_session:
+    #     if gyms_this_session[g] == filter_hour:
+    #         # gymsList[g] = gyms_this_session[g]
+    #         gymsList.append()
+    for g in gyms_this_session:
+        if g[1] == filter_hour:
+            gymsList.append((g[0], g[1]))
+    return gymsList, last_title
+
+def gyms_sorted_by_distance(user_location, gyms_list_session, city):
+    last_title = None
+    gymsList = []
+    gmaps = googlemaps.Client(key='AIzaSyBOGAj_OnaB4QMmNXVQPUnSn4TXmWDDWok')
+    for g in gyms_list_session:
+        loc = g[0] + ' ' + city
+        my_dist = gmaps.distance_matrix(user_location ,loc)['rows'][0]['elements'][0]['distance']['value']
+        gymsList.append((g[0], g[1], my_dist))
+    gymsList.sort(key = lambda x: x[2]) 
+    sortedList = [(a, b) for a, b, c in gymsList]
+    print("sorted by distance :", sortedList)
+    return sortedList, last_title
 
 
 def read(book_id):
