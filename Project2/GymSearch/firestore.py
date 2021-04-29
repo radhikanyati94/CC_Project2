@@ -205,6 +205,7 @@ def add_extracted_gym_details(doc_id):
     if details is None:
         return 1
     else:
+        details["website"] = "NA"
         if details["website"] != "NA" and details["website"] != "N/A" and "https://" not in details["website"] and "http://" not in details["website"]:
             details["website"] = "https://" + details["website"]
         reviews = details['Reviews']
