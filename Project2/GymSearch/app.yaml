@@ -11,8 +11,8 @@ inbound_services:
 - warmup
 
 automatic_scaling:
-  min_instances: 1
+  min_instances: 0
   max_instances: 10
-  min_idle_instances: 1
+  min_idle_instances: 0
   max_pending_latency: automatic
   max_concurrent_requests: 50

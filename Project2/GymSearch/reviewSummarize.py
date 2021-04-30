@@ -26,7 +26,7 @@ from nltk.tokenize import word_tokenize
 def get_vectorized_matrix(t):
     stop_words = set(stopwords.words('english'))
     stop_words.add('also')
-    list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','last','many','sure','3rd','serious','joe','tommy','renene']
+    list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','last','many','sure','3rd','serious','joe','tommy','renene', "’", "'ve", "n't", "would", "One", "'s", "hello", "'re"]
     stop_words.update(list_of_stopwords)
     tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
 
