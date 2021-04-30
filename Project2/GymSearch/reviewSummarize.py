@@ -59,7 +59,7 @@ def get_vectorized_matrix(t):
             for jm in i_split:
                 if jm not in stop_words1:
                     lst.append(jm)
-        print(lst)
+        # print(lst)
     counts = collections.Counter(lst).most_common(5)
 
     cv = CountVectorizer(ngram_range=(1,1), stop_words = stop_words)

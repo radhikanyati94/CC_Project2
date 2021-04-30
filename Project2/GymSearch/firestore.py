@@ -176,9 +176,9 @@ def add_review(rev, gymName):
 
     query_ref = db.collection(u'Gyms').document(gymName)
     gym = document_to_dict(query_ref.get())
-    freq_words = gym['Frequent_Words']    
+    
     reviews = gym['Reviews']
-    print("len of reviews: ", len(reviews))
+    # print("len of reviews: ", len(reviews))
     revs = []
     
     for r in reviews: 
@@ -186,9 +186,6 @@ def add_review(rev, gymName):
     
     summ, word_count =reviewSummarize.get_vectorized_matrix(revs)
 
-    if len(freq_words)>len(word_count):
-        word_count = freq_words
-    
 
     # print(word_count)
     gym_ref.update({'`Sentiment Score`': score, "Summary":summ, 'Frequent_Words' : word_count})

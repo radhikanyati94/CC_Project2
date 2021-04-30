@@ -154,6 +154,7 @@ def list_on_pref():
         if filter_type == "All":
             if 'full_list_with_hours' in session:
                 books = session['full_list_with_hours']
+                session['list_with_hours'] = session['full_list_with_hours'] 
 
         return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=city, fitnessHour="All", sortBy="Recommended")
 
@@ -208,7 +209,11 @@ def viewForGymUser(gym_id):
 @app.route('/gyms/<gym_id>/subscribe')
 def subscribe(gym_id):
     gym = firestore.add_subscriber(request.args.get('email'), gym_id)
-    
+    if "Frequent_Words" in gym:
+        freq_word_list=[]
+        for word in gym["Frequent_Words"]:
+            freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+        gym["freq_word_list"]=freq_word_list
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message = "Subscribed Successfully!")
 
 @app.route('/gyms/<gym_id>/<review_type>')
