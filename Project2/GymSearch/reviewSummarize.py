@@ -19,13 +19,15 @@ from textblob import TextBlob
 # nltk.download('punkt')
 # nltk.download('averaged_perceptron_tagger')
 
-stopwords = set(stopwords.words('english'))
-
 from nltk.tokenize import word_tokenize
+
+# stopwords = set(stopwords.words('english'))
+
 def get_vectorized_matrix(t):
-    stopwords.add('also')
+    stop_words = set(stopwords.words('english'))
+    stop_words.add('also')
     list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','last','many','sure','3rd','serious','joe','tommy','renene']
-    stopwords.update(list_of_stopwords)
+    stop_words.update(list_of_stopwords)
     tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
 
     lst=[]
@@ -34,7 +36,7 @@ def get_vectorized_matrix(t):
         tokenized = nltk.word_tokenize(txt)
         nouns = [word for (word,pos) in nltk.pos_tag(tokenized) if is_noun(pos)]
         example_words = nouns
-        stop_words1=set(stopwords)
+        stop_words1=set(stop_words)
     #     for im in example_words:
     #         i_split = im.split()
     #         for jm in i_split:
@@ -43,22 +45,24 @@ def get_vectorized_matrix(t):
     # counts = collections.Counter(lst).most_common(5)
 
     for txt in t:
+        # print(txt)
         is_noun = lambda pos: pos[:2] in tags
         tokenized = nltk.word_tokenize(txt)
         nouns = [word for (word,pos) in nltk.pos_tag(tokenized) if is_noun(pos)]
         example_words = nouns
         for w in example_words:
-            if w not in stopwords:
+            if w not in stop_words:
                 x = str(w)
-                stopwords.add(x)  
+                stop_words.add(x)  
         for im in example_words:
             i_split = im.split()
             for jm in i_split:
                 if jm not in stop_words1:
                     lst.append(jm)
+        print(lst)
     counts = collections.Counter(lst).most_common(5)
 
-    cv = CountVectorizer(ngram_range=(1,1), stop_words = stopwords)
+    cv = CountVectorizer(ngram_range=(1,1), stop_words = stop_words)
     X = cv.fit_transform(t)
     Xc = (X.T * X)
     Xc.setdiag(0)
@@ -111,4 +115,5 @@ def get_vectorized_matrix(t):
         word_counts[c[0]] = c[1]
     # print(word_counts)
     return final_list, word_counts
+
 
