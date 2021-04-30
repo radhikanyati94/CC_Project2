@@ -22,6 +22,16 @@ from google.cloud import error_reporting
 import google.cloud.logging
 import storage
 import datetime
+import nltk
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('brown')
+# # nltk.download('punkt')
+# # nltk.download('averaged_perceptron_tagger')
+# nltk.download('vader_lexicon')
+
 
 
 # [START upload_image_file]
@@ -135,6 +145,9 @@ def list_on_pref():
             filter_type = session["filter_type"]
         else:
             filter_type = "All"
+        
+        if filter_type == "All":
+            books = session['full_list_with_hours']
         return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=city, fitnessHour="All", sortBy="Recommended")
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
