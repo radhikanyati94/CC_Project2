@@ -170,6 +170,10 @@
                     
                     i++;
                 }
+
+                $("#cancel").click(function(){
+                    window.location.href = window.location.origin;
+                }); 
             } 
             if('{{hideForm}}' === 'True'){
                 document.getElementById("loginForm").style.display = "none";
@@ -225,10 +229,14 @@
   <body>
     <div class="navbar navbar-default">
       <div class="container">
-        <div class="navbar-header">
+        <!-- <div class="navbar-header">
           <div class="navbar-brand"><a href="/">HomePage</a></div>
         </div>
         <ul class="nav navbar-nav">
+          <li><a href="/list">Search Gyms</a></li>
+        </ul> -->
+        <ul class="nav navbar-nav">
+          <li> <a href="/">Home</a> </li>
           <li><a href="/list">Search Gyms</a></li>
         </ul>
       </div>

@@ -1,7 +1,10 @@
 import nltk
-nltk.download('vader_lexicon')
+# nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer 
 from google.cloud import firestore
+import os
+cwd = os.getcwd()
+nltk.data.path.append(cwd + '/nltk_data')
 
 def document_to_dict(doc):
     if not doc.exists:

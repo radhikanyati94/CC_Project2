@@ -22,6 +22,16 @@ from google.cloud import error_reporting
 import google.cloud.logging
 import storage
 import datetime
+import nltk
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('brown')
+# # nltk.download('punkt')
+# # nltk.download('averaged_perceptron_tagger')
+# nltk.download('vader_lexicon')
+
 
 
 # [START upload_image_file]
@@ -135,6 +145,9 @@ def list_on_pref():
             filter_type = session["filter_type"]
         else:
             filter_type = "All"
+        
+        if filter_type == "All":
+            books = session['full_list_with_hours']
         return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=city, fitnessHour="All", sortBy="Recommended")
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
@@ -164,68 +177,39 @@ def sort_list_by_distance(user_location):
 
 @app.route('/gyms/<gym_id>')
 def viewGym(gym_id):
+    gym = viewHelper(gym_id) 
+    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message="")
+
+def viewHelper(gym_id):
     gym = firestore.readGym(gym_id)
-    if "https://" not in gym["website"] and "http://" not in gym["website"]:
-        gym["website"] = "https://" + gym["website"]
     if "Frequent_Words" in gym:
         freq_word_list=[]
         for word in gym["Frequent_Words"]:
             freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
         gym["freq_word_list"]=freq_word_list
-    return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message="")
-
-def viewHelper(gym_id):
-    gym = firestore.readGym(gym_id)
-    
+    return gym 
 
 @app.route('/gyms/<gym_id>/view')
 def viewForGymUser(gym_id):
-    gym = firestore.readGym(gym_id)
-    if "https://" not in gym["website"] and "http://" not in gym["website"]:
-        gym["website"] = "https://" + gym["website"]
-    freq_word_list=[]
-    for word in gym["Frequent_Words"]:
-       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
-    gym["freq_word_list"]=freq_word_list
+    gym = viewHelper(gym_id)
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType="All")
-
-# def help(gym):
-#     freq_word_list=[]
-#     for word in gym["Frequent_Words"]:
-#        freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
-#     gym["freq_word_list"]=freq_word_list
 
 @app.route('/gyms/<gym_id>/subscribe')
 def subscribe(gym_id):
-    print(request.args.get('email'))
-    print(gym_id)
     gym = firestore.add_subscriber(request.args.get('email'), gym_id)
     
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message = "Subscribed Successfully!")
 
 @app.route('/gyms/<gym_id>/<review_type>')
 def filterGym(gym_id, review_type):
-    gym = firestore.readGym(gym_id)
-    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
-    if "https://" not in gym["website"] and "http://" not in gym["website"]:
-        gym["website"] = "https://" + gym["website"]
-    freq_word_list=[]
-    for word in gym["Frequent_Words"]:
-       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
-    gym["freq_word_list"]=freq_word_list
-    
+    gym = viewHelper(gym_id)
+    gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)    
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type, message="")
 
 @app.route('/gyms/user/<gym_id>/<review_type>')
 def filterGymUser(gym_id, review_type):
-    gym = firestore.readGym(gym_id)
+    gym = viewHelper(gym_id)
     gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
-    if "https://" not in gym["website"] and "http://" not in gym["website"]:
-        gym["website"] = "https://" + gym["website"]
-    freq_word_list=[]
-    for word in gym["Frequent_Words"]:
-       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
-    gym["freq_word_list"]=freq_word_list
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
@@ -246,7 +230,8 @@ def addGym():
         data = request.form.to_dict()
         gymName = data["name"]
         user = firestore.readGymUser(data["email"])
-        if(user == None):
+        gym = firestore.readGym(gymName)
+        if(user == None and gym == None):
             i = 1
             events = []
             userDict = {}
@@ -288,8 +273,10 @@ def addGym():
                 message = "Could not find gym!!"
                 return render_template('add_gym.html', action='Add', gym={}, message=message)
             return redirect(url_for('.viewForGymUser', gym_id=gymName))
+        elif gym == None:
+            message = "User Already Exists! Please Try to Login."
         else:
-            message = "User Already Exists. Please Try to Login."
+            message = "Gym is already registered with other email address!"
 
     return render_template('add_gym.html', action='Add', gym={}, message=message, eventNum=2)
 

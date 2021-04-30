@@ -20,13 +20,17 @@
 
 {% with messages = get_flashed_messages() %}
   {% for message in messages %}
-    <p>{{ message }}<p>
+    <p>{{ message }}</p>
   {% endfor %}
 {% endwith %}
 
-<div>
-    <button id="user">User</button> &emsp; &emsp;
-    <button id="gym">Gym</button> &emsp; &emsp;
+<div style="text-align: center;">
+    <h2>Welcome!</h2>
+    </br>
+    <div>
+        <button id="user" class="btn btn-success" style="padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;">User</button> &emsp; &emsp;
+        <button id="gym" class="btn btn-success" style="padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;">Gym</button> &emsp; &emsp;
+    </div>
 </div>
 
 </br> </br>

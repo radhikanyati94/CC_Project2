@@ -2,9 +2,13 @@ import nltk
 from google.cloud import firestore
 from nltk.sentiment.vader import SentimentIntensityAnalyzer 
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('wordnet')
+
+import os
+cwd = os.getcwd()
+nltk.data.path.append(cwd + '/nltk_data')
 
 from nltk.tag import pos_tag
 from nltk.stem.wordnet import WordNetLemmatizer

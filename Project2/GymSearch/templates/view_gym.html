@@ -157,6 +157,7 @@
     <p>No Sessions found</p>
     {% endif %}
 
+    </br>
     {% if gym.Time %}
         <div class="openingHours">
             <p> <b>Opening Hours</b></p>
@@ -210,29 +211,29 @@
    <p><b>Frequently occured words in reviews</b></p>
     {% for s in gym.freq_word_list %}
        <div class="boxed1">
-             <i>{{s}}</i>
-             <br>    
-        </div>
-        {% else %} -->
+             <i>{{s}}</i>    
+        </div> &emsp;&emsp; 
+        {% else %} 
         <i>Frequently occuring words cannot be found</i>
     {% endfor %} 
-<br>
+    </br>
+    </br>
         <p><b>Summary</b></p>
     {% for s in gym.Summary %}
         {% if gym.Summary %}
-        <!-- <div></div> -->
+        
         {% endif %}
        {% for k in s %} 
        <div class="boxed">
              <i>{{k}}, {{s[k]}}</i> 
-             <br>
-        </div>
+        </div> &emsp;&emsp;
         {% endfor %}
         {% else %}
         <i>Summary cannot be found</i>
 
     {% endfor %}
-<br>
+    </br>
+    </br>
     <p>Filter By:
     <select id="reviewDropdown" name="reviewDropdown">
         <option value="All">All</option>

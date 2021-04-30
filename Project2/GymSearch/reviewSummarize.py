@@ -19,7 +19,7 @@ nltk.download('averaged_perceptron_tagger')
 from nltk.tokenize import word_tokenize
 def get_vectorized_matrix(t):
     stopwords.add('also')
-    list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
+    list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','last','many','sure','3rd','serious','joe','tommy','renene']
     stopwords.update(list_of_stopwords)
     tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
 
