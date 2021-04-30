@@ -96,7 +96,9 @@ def home():
         session.pop('city', None)
     if "filter_type" in session:
         session.pop('filter_type', None)
-
+    if 'full_list_with_hours' in session:
+        session.pop('full_list_with_hours', None)
+ 
     result = ""
     hideForm = True
     if request.method == 'POST':
@@ -137,17 +139,21 @@ def list_on_pref():
         last_title = None
         if 'list_with_hours' in session:
             books = session['list_with_hours']
+
         if 'city' in session:
             city = session['city']
         else:
             city=""
+
         if 'filter_type' in session:
             filter_type = session["filter_type"]
         else:
             filter_type = "All"
         
         if filter_type == "All":
-            books = session['full_list_with_hours']
+            if 'full_list_with_hours' in session:
+                books = session['full_list_with_hours']
+
         return render_template('gym_list.html', gymNames=books, last_title=last_title, fitnessType=filter_type, message=message, area=city, fitnessHour="All", sortBy="Recommended")
 
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
