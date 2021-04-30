@@ -173,7 +173,34 @@ def add_review(rev, gymName):
     gym_ref.update({u'Reviews': firestore.ArrayUnion([rev])})
     score = sentimentScore.sentiment_score(gymName)
     # print(score)
-    gym_ref.update({'`Sentiment Score`': score})
+
+    query_ref = db.collection(u'Gyms').document(gymName)
+    gym = document_to_dict(query_ref.get())
+    reviews = gym['Reviews']
+    revs = []
+    # print(reviews)
+    for r in reviews: 
+        revs.append(r['review'])
+    # print("in firestory.py", type(revs))
+    # print(revs)
+    summ, word_count =reviewSummarize.get_vectorized_matrix(revs)
+    # print(word_count)
+    gym_ref.update({'`Sentiment Score`': score, "Summary":summ, "Frequent_Words" : word_count})
+    
+    # snapshot = gym_ref.get()
+    # area = document_to_dict(snapshot)['Area']
+    # loc = gymName + ' ' + area
+    # details = ExtractGymDetails.extractDetails(loc)
+    # reviews = details['Reviews']
+    # revs = []
+    # for r in reviews: 
+    #     revs.append(r['review'])
+    # summ =reviewSummarize.get_vectorized_matrix(revs)
+    # word_count=reviewSummarize.wordscount(revs)
+    #     # print(summ)
+    # details["Frequent words"] = word_count
+    # details["Summary"]=summ
+    # gym_ref.update(details, merge=True)
 
 def add_subscriber(email, gymName):
     db = firestore.Client()
@@ -209,9 +236,13 @@ def add_extracted_gym_details(doc_id):
         revs = []
         for r in reviews: 
             revs.append(r['review'])
-        summ =reviewSummarize.get_vectorized_matrix(revs)
+        summ, word_count =reviewSummarize.get_vectorized_matrix(revs)
+        # print(type(word_count))
+        details["Frequent_Words"] = word_count
+    
         # print(summ)
         details["Summary"] = summ
+
         gym_ref.set(details, merge=True)
         #Add type to reviews:
         AddReviewType.addType(doc_id)

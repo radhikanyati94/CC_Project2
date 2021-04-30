@@ -36,10 +36,10 @@
     </h2>
     {% if gym.location %}
         <p> <b>Address : </b> {{gym.location}} </p>
-                <div class=summar_of_reviews>
+                <!-- <div class=summar_of_reviews>
 </br>
 <b> Summary: </b> {{gym.Summary}}</b>
-</div>
+</div> -->
     {% endif %}
 
 
@@ -156,24 +156,32 @@
 
     <h4> <b>Reviews :</b> </h4> 
 
+       <p><b>Frequently occured words in reviews</b></p>
+    {% for s in gym.freq_word_list %}
+       <div class="boxed1">
+             <i>{{s}}</i> 
+             <br>
+        </div>
+        {% else %} -->
+        <i>Frequently occuring words cannot be found</i>
+    {% endfor %} 
+<br>
     <p><b>Summary</b></p>
     {% for s in gym.Summary %}
-    <!-- <div class=summary_of_reviews>
-            </br> -->
         {% if gym.Summary %}
         <!-- <div></div> -->
         {% endif %}
        {% for k in s %} 
        <div class="boxed">
-             <b>{{k}}, {{s[k]}}</b> &emsp; &emsp;
+             <i>{{k}}, {{s[k]}}</i> 
+             <br>
         </div>
         {% endfor %}
         {% else %}
-        <b>Summary cannot be found</b>
-        <!-- <div></div> -->
-            <!-- </div> -->
-    {% endfor %}
+        <i>Summary cannot be found</i>i>
 
+    {% endfor %}
+<br>
     <p>Filter By:
     <select id="reviewUserDropdown" name="reviewUserDropdown">
         <option value="All">All</option>

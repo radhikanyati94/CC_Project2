@@ -30,9 +30,9 @@ def sentiment_score(doc_id):
         # print()
 
 
-    print(len(reviews), len(scores))
+    #print(len(reviews), len(scores))
     sentScore = sum(scores)/len(scores)
-    print(doc_id, sentScore)
+    #print(doc_id, sentScore)
     return sentScore
 
 def list_the_gyms():

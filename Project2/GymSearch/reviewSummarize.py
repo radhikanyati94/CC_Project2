@@ -16,26 +16,13 @@ nltk.download('brown')
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
-stopwords = set(stopwords.words('english'))
-
 from nltk.tokenize import word_tokenize
-
-# def extract_reviews():
-#     db = firestore.Client()
-#     query = list(db.collection(u'Gyms').stream())
-#     doc = query[0]
-#     reviews = []
-#     gym_ref = db.collection(u'Gyms').document(doc.id)
-#     snapshot = gym_ref.get().to_dict()["Reviews"]
-#     for s in snapshot:
-#         reviews.append(s['review'])
-#     return reviews 
-
-def wordscount(t):
+def get_vectorized_matrix(t):
     stopwords.add('also')
-    list_of_stopwords=['mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
+    list_of_stopwords=['*',"'",'mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
     stopwords.update(list_of_stopwords)
     tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
+
     lst=[]
     for txt in t:
         is_noun = lambda pos: pos[:2] in tags
@@ -43,35 +30,12 @@ def wordscount(t):
         nouns = [word for (word,pos) in nltk.pos_tag(tokenized) if is_noun(pos)]
         example_words = nouns
         stop_words1=set(stopwords)
-        for im in example_words:
-            i_split = im.split()
-            for jm in i_split:
-                if jm not in stop_words1:
-                    lst.append(jm)
-    counts = collections.Counter(lst).most_common(5)
-    return counts
-    # print(counts)
-
-def get_vectorized_matrix(t):
-    stopwords.add('also')
-    list_of_stopwords=['mcclintock','site','one','two','monkey','like','rack','though','whether','able','another','every','however','next','since','tom','ty','without','important','last','many','sure','3rd','serious','joe','tommy','renene']
-    stopwords.update(list_of_stopwords)
-    tags = ['NN', 'PRP', 'PRP$', 'VB', 'VBD', 'WP', 'MD', 'RB', 'RBR', 'RBS']
-    # lst=[]
-    # for txt in t:
-    #     is_noun = lambda pos: pos[:2] in tags
-    #     tokenized = nltk.word_tokenize(txt)
-    #     nouns = [word for (word,pos) in nltk.pos_tag(tokenized) if is_noun(pos)]
-    #     example_words = nouns
-    #     stop_words1=set(stopwords)
     #     for im in example_words:
     #         i_split = im.split()
     #         for jm in i_split:
     #             if jm not in stop_words1:
     #                 lst.append(jm)
-    #   individual word frequency
     # counts = collections.Counter(lst).most_common(5)
-    # # print(counts)
 
     for txt in t:
         is_noun = lambda pos: pos[:2] in tags
@@ -81,7 +45,13 @@ def get_vectorized_matrix(t):
         for w in example_words:
             if w not in stopwords:
                 x = str(w)
-                stopwords.add(x)        
+                stopwords.add(x)  
+        for im in example_words:
+            i_split = im.split()
+            for jm in i_split:
+                if jm not in stop_words1:
+                    lst.append(jm)
+    counts = collections.Counter(lst).most_common(5)
 
     cv = CountVectorizer(ngram_range=(1,1), stop_words = stopwords)
     X = cv.fit_transform(t)
@@ -112,12 +82,11 @@ def get_vectorized_matrix(t):
     df.head().index
     df.columns
 
-    # print(df)
     array = df.to_numpy()
     rows,col = array.shape[0],array.shape[1]
     final_list = []
     words = list(df.columns)
-    for r in range(rows//2):
+    for r in range(rows):
         max_val = 0
         max_index = 0 
         for c in range(0,col): 
@@ -132,8 +101,9 @@ def get_vectorized_matrix(t):
             for f in final_list:
                 if words[r] in f.values():
                     final_list=final_list[:-1]
-    return final_list
-
-
-
+    word_counts = {}
+    for c in counts:
+        word_counts[c[0]] = c[1]
+    # print(word_counts)
+    return final_list, word_counts
 

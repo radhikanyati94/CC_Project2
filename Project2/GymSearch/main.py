@@ -167,15 +167,33 @@ def viewGym(gym_id):
     gym = firestore.readGym(gym_id)
     if "https://" not in gym["website"] and "http://" not in gym["website"]:
         gym["website"] = "https://" + gym["website"]
-        
+    if "Frequent_Words" in gym:
+        freq_word_list=[]
+        for word in gym["Frequent_Words"]:
+            freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+        gym["freq_word_list"]=freq_word_list
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType="All", message="")
+
+def viewHelper(gym_id):
+    gym = firestore.readGym(gym_id)
+    
 
 @app.route('/gyms/<gym_id>/view')
 def viewForGymUser(gym_id):
     gym = firestore.readGym(gym_id)
     if "https://" not in gym["website"] and "http://" not in gym["website"]:
         gym["website"] = "https://" + gym["website"]
+    freq_word_list=[]
+    for word in gym["Frequent_Words"]:
+       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+    gym["freq_word_list"]=freq_word_list
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType="All")
+
+# def help(gym):
+#     freq_word_list=[]
+#     for word in gym["Frequent_Words"]:
+#        freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+#     gym["freq_word_list"]=freq_word_list
 
 @app.route('/gyms/<gym_id>/subscribe')
 def subscribe(gym_id):
@@ -191,6 +209,11 @@ def filterGym(gym_id, review_type):
     gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
     if "https://" not in gym["website"] and "http://" not in gym["website"]:
         gym["website"] = "https://" + gym["website"]
+    freq_word_list=[]
+    for word in gym["Frequent_Words"]:
+       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+    gym["freq_word_list"]=freq_word_list
+    
     return render_template('view_gym.html', gym=gym, gym_id=gym_id, reviewType=review_type, message="")
 
 @app.route('/gyms/user/<gym_id>/<review_type>')
@@ -199,6 +222,10 @@ def filterGymUser(gym_id, review_type):
     gym['Reviews'] = firestore.getSpecificReviews(gym_id,review_type)
     if "https://" not in gym["website"] and "http://" not in gym["website"]:
         gym["website"] = "https://" + gym["website"]
+    freq_word_list=[]
+    for word in gym["Frequent_Words"]:
+       freq_word_list.append(str(word)+"("+str(gym["Frequent_Words"][word])+")") 
+    gym["freq_word_list"]=freq_word_list
     return render_template('view_gym_user.html', gym=gym, gym_id=gym_id, reviewType=review_type)
 
 @app.route('/gyms/add/<gym_id>', methods=['GET', 'POST'])
