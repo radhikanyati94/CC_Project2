@@ -300,6 +300,6 @@ def getSubscribers(gym_id):
     else:
         ret_list_of_subs = []
     parsed_gym_id = urllib.parse.quote(gym_id)
-    parsed_url = "https://8080-cs-621499849372-default.cs-us-west1-olvl.cloudshell.dev/gyms/" + parsed_gym_id
+    parsed_url = "https://cc-project-2-310102.wl.r.appspot.com/gyms/" + parsed_gym_id
     return ret_list_of_subs, parsed_url
     
