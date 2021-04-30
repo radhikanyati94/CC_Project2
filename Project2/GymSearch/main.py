@@ -137,6 +137,7 @@ def list_on_pref():
             message=""
         books = []
         last_title = None
+
         if 'list_with_hours' in session:
             books = session['list_with_hours']
 
@@ -159,6 +160,10 @@ def list_on_pref():
 @app.route('/list/<filter_type>', methods=['GET', 'POST'])
 def filter_list_on_pref(filter_type):
     message = ""
+    if filter_type == "All":
+        session['filter_type'] = "All"
+        return redirect(url_for('.list_on_pref'))
+
     if 'gym_full_list' not in session:
         message = "Please enter city first!"
         session["typeCityMessage"] = message

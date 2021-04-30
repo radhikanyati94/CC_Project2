@@ -30,16 +30,24 @@
 
         $(document).ready( function() {
 
+            // $("#fitnessSessionDrops").val('{{fitnessType}}');
+            // $("#fitnessSessionDrops").change(function () {
+            //     var val = $("#fitnessSessionDrops").val();
+            //     var parser = new DOMParser;
+            //     //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
+            //     if(val === 'All'){
+            //         window.location.href = window.location.origin + "/list";
+            //     } else {
+            //         window.location.href = window.location.origin + "/list/"  + val;
+            //     } 
+            // });
+            
             $("#fitnessSessionDrops").val('{{fitnessType}}');
             $("#fitnessSessionDrops").change(function () {
                 var val = $("#fitnessSessionDrops").val();
                 var parser = new DOMParser;
                 //var decoded = '{{gym_id}}'.replace(/&amp;/g, '&');
-                if(val === 'All'){
-                    window.location.href = window.location.origin + "/list";
-                } else {
-                    window.location.href = window.location.origin + "/list/"  + val;
-                } 
+                window.location.href = window.location.origin + "/list/"  + val;
             });
 
             $("#fitnessOpenOrClosed").val('{{fitnessHour}}');
