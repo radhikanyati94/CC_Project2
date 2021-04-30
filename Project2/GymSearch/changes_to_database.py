@@ -5,6 +5,7 @@ import nltk
 from google.cloud import firestore
 from nltk.sentiment.vader import SentimentIntensityAnalyzer 
 import random
+import reviewSummarize
 
 # nltk.download('punkt')
 # nltk.download('averaged_perceptron_tagger')
@@ -139,13 +140,21 @@ def add_gym_and_details(data, name):
     print(to_add)
 
 
-name = "Planet Fitness"
-data = pk.load(open("/home/ssridh55/cloudshell_open/github_radhikanyati94_cc_project2/Project2/GymSearch/Planet Fitness", "rb"))
+# name = "Planet Fitness"
+# data = pk.load(open("/home/ssridh55/cloudshell_open/github_radhikanyati94_cc_project2/Project2/GymSearch/Planet Fitness", "rb"))
 
-add_gym_and_details(data, name)
+# add_gym_and_details(data, name)
 
 
 
+db = firestore.Client()
+ref = db.collection(u'Gyms').document('Speakeasy Fitness Outdoor Gym - DTLA Skyline')
+snapshot = document_to_dict(ref.get())
+reviews = snapshot['Reviews']
+revs = []
+for r in reviews:
+    revs.append(r['review'])
+final_count, counts = reviewSummarize.get_vectorized_matrix(revs)
 
 
 # db = firestore.Client()
