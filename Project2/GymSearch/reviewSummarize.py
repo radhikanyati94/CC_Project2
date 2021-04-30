@@ -9,12 +9,17 @@ import warnings
 from sklearn.feature_extraction.text import CountVectorizer
 warnings.filterwarnings("ignore")
 import nltk
+import os
+cwd = os.getcwd()
+nltk.data.path.append(cwd + '/nltk_data')
 from nltk.corpus import stopwords
 from textblob import TextBlob
-nltk.download('stopwords')
-nltk.download('brown')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('stopwords')
+# nltk.download('brown')
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+
+stopwords = set(stopwords.words('english'))
 
 from nltk.tokenize import word_tokenize
 def get_vectorized_matrix(t):
