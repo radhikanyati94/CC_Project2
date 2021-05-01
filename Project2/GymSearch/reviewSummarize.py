@@ -14,10 +14,10 @@ cwd = os.getcwd()
 nltk.data.path.append(cwd + '/nltk_data')
 from nltk.corpus import stopwords
 from textblob import TextBlob
-# nltk.download('stopwords')
-# nltk.download('brown')
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords')
+nltk.download('brown')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
 from nltk.tokenize import word_tokenize
 
